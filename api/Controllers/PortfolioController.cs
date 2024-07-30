@@ -40,7 +40,7 @@ namespace api.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> AddPortfolio(string symbol, int Quantity)
+        public async Task<IActionResult> AddPortfolio(string symbol, int quantity)
         {
             var username = User.GetUsername();
             var appUser = await _userManager.FindByNameAsync(username);
@@ -64,7 +64,7 @@ namespace api.Controllers
                 //return BadRequest("Cannot add same stock to portfolio");
                 if (existingPortfolio != null)
                 {
-                    existingPortfolio.Quantity += Quantity;
+                    existingPortfolio.Quantity += quantity;
                     //await _portfolioRepo.UpdateAsync(existingPortfolio);
                 }
             }
@@ -74,7 +74,7 @@ namespace api.Controllers
             {
                 StockId = stock.Id,
                 AppUserId = appUser.Id,
-                Quantity = Quantity
+                Quantity = quantity
             };
 
             await _portfolioRepo.CreateAsync(portfolioModel);

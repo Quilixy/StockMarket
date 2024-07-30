@@ -3,6 +3,7 @@ using api.Interfaces;
 using api.Models;
 using api.Repository;
 using api.Service;
+using api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -94,6 +95,8 @@ builder.Services.AddAuthentication(options => {
 builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IPortfolioRepository, PortfolioRepository>();
+builder.Services.AddScoped<IBalanceRepository, BalanceRepository>();
+builder.Services.AddScoped<IBalanceService, BalanceService>();
 
 
 var app = builder.Build();

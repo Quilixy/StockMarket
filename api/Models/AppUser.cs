@@ -8,7 +8,7 @@ namespace api.Models
 {
     public class AppUser : IdentityUser
     {
-        public decimal Balance { get; set; }
+        public decimal Balance { get; set; } = 0;
         public List<Portfolio> Portfolios {get; set;} = new List<Portfolio>();
         
     }
