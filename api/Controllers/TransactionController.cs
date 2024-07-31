@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using api.Dtos.Portfolio;
 using api.Dtos.Stock;
 using api.Dtos.Transaction;
 using api.Extensions;
@@ -24,15 +25,18 @@ namespace api.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly IStockRepository _stockRepo;
         private readonly ITransactionRepository _transactionRepo;
+        private readonly IPortfolioRepository _portfolioRepo;
         private readonly decimal _commissionRate = 0.05m; // %5 komisyon
 
         public TransactionController(UserManager<AppUser> userManager,
         IStockRepository stockRepo,
-        ITransactionRepository transactionRepo)
+        ITransactionRepository transactionRepo,
+        IPortfolioRepository portfolioRepo)
         {
             _userManager = userManager;
             _stockRepo = stockRepo;
             _transactionRepo = transactionRepo;
+            _portfolioRepo = portfolioRepo;
         }
 
         [HttpPost("purchase")]
@@ -66,6 +70,27 @@ namespace api.Controllers
                 Date = DateTime.UtcNow
             };
 
+            var portfolio = await _portfolioRepo.GetByUserAndSymbolAsync(appUser.Id, request.Symbol);
+            if (portfolio == null)
+            {
+                portfolio = new Portfolio
+                {
+                    AppUserId = appUser.Id,
+                    StockId = stock.Id,
+                    Quantity = request.Quantity
+                };
+                await _portfolioRepo.CreateAsync(portfolio);
+            }
+            else
+            {
+                portfolio.Quantity += request.Quantity;
+                await _portfolioRepo.UpdateAsync(portfolio, new UpdatePortfolioRequestDto
+                {
+                    Symbol = portfolio.Stock.Symbol,
+                    Quantity = portfolio.Quantity
+                });
+            }
+
             await _transactionRepo.CreateAsync(transaction);
             await _userManager.UpdateAsync(appUser);
             await _stockRepo.UpdateAsync(stock.Id, new UpdateStockRequestDto
@@ -93,8 +118,26 @@ namespace api.Controllers
             decimal commission = totalIncome * _commissionRate;
             decimal totalAmount = totalIncome - commission;
 
+            var portfolio = await _portfolioRepo.GetByUserAndSymbolAsync(appUser.Id, request.Symbol);
+            if (portfolio == null || portfolio.Quantity < request.Quantity)
+                return BadRequest("Insufficient stock in portfolio");
+
             appUser.Balance += totalAmount;
             stock.Quantity += request.Quantity;
+
+            portfolio.Quantity -= request.Quantity;
+            if (portfolio.Quantity == 0)
+            {
+                await _portfolioRepo.DeletePortfolio(appUser, request.Symbol);
+            }
+            else
+            {
+                await _portfolioRepo.UpdateAsync(portfolio, new UpdatePortfolioRequestDto
+                {
+                    Symbol = portfolio.Stock.Symbol,
+                    Quantity = portfolio.Quantity
+                });
+            }
 
             var transaction = new Transaction
             {

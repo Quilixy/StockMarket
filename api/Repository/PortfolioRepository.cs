@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.Data;
+using api.Dtos.Portfolio;
 using api.Interfaces;
 using api.Models;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +39,13 @@ namespace api.Repository
             return portfolioModel;
         }
 
+       public async Task<Portfolio> GetByUserAndSymbolAsync(string userId, string symbol)
+        {
+            return await _context.Portfolios
+                .FirstOrDefaultAsync(p => p.AppUserId == userId && p.Stock.Symbol == symbol);
+        }
+
+
         public async Task<List<Stock>> GetUserPortfolio(AppUser user)
         {
             return await _context.Portfolios.Where(u => u.AppUserId == user.Id)
@@ -51,5 +59,13 @@ namespace api.Repository
                 
             }).ToListAsync();
         }
+
+        public async Task UpdateAsync(Portfolio portfolio, UpdatePortfolioRequestDto updateDto)
+        {
+            portfolio.Quantity = updateDto.Quantity;
+            _context.Portfolios.Update(portfolio);
+            await _context.SaveChangesAsync();
+        }
+
     }
 }

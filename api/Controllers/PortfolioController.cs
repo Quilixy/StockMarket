@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.Dtos.Portfolio;
 using api.Extensions;
 using api.Interfaces;
 using api.Models;
@@ -38,55 +39,32 @@ namespace api.Controllers
             return Ok(userPortfolio);
         }
 
-        [HttpPost]
+ [HttpPost("add")]
         [Authorize]
-        public async Task<IActionResult> AddPortfolio(string symbol, int quantity)
+        public async Task<IActionResult> AddPortfolio([FromBody] Portfolio portfolio)
         {
             var username = User.GetUsername();
             var appUser = await _userManager.FindByNameAsync(username);
-            var stock = await _stockRepo.GetBySymbolAsync(symbol);
+            portfolio.AppUserId = appUser.Id;
 
-            if (stock == null)
-            {
+            await _portfolioRepo.CreateAsync(portfolio);
 
-                await _stockRepo.CreateAsync(stock);
-                
-            }
+            return Ok();
+        }
 
-            if (stock == null) return BadRequest("Stock not found");
+        [HttpPost("update")]
+        [Authorize]
+        public async Task<IActionResult> UpdatePortfolio([FromBody] UpdatePortfolioRequestDto request)
+        {
+            var username = User.GetUsername();
+            var appUser = await _userManager.FindByNameAsync(username);
 
-            var userPortfolio = await _portfolioRepo.GetUserPortfolio(appUser);
-            var existingPortfolio = userPortfolio.FirstOrDefault(e => e.Id == stock.Id);
+            var portfolio = await _portfolioRepo.GetByUserAndSymbolAsync(appUser.Id, request.Symbol);
+            if (portfolio == null) return BadRequest("Portfolio not found");
 
+            await _portfolioRepo.UpdateAsync(portfolio, request);
 
-            if (userPortfolio.Any(e => e.Symbol.ToLower() == symbol.ToLower())) 
-            {
-                //return BadRequest("Cannot add same stock to portfolio");
-                if (existingPortfolio != null)
-                {
-                    existingPortfolio.Quantity += quantity;
-                    //await _portfolioRepo.UpdateAsync(existingPortfolio);
-                }
-            }
-           
-
-            var portfolioModel = new Portfolio
-            {
-                StockId = stock.Id,
-                AppUserId = appUser.Id,
-                Quantity = quantity
-            };
-
-            await _portfolioRepo.CreateAsync(portfolioModel);
-
-            if (portfolioModel == null)
-            {
-                return StatusCode(500, "Could not create");
-            }
-            else
-            {
-                return Created();
-            }
+            return Ok();
         }
 
         [HttpDelete]
