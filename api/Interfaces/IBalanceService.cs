@@ -7,5 +7,7 @@ namespace api.Interfaces
     {
         Task<AppUser> GetUserByUsername(string username);
         Task UpdateUserBalance(string userId, decimal newBalance);
+        Task<SystemBalance> GetSystemBalance();
+        Task UpdateSystemBalance(decimal newBalance);
     }
 }

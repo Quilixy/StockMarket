@@ -56,5 +56,27 @@ namespace api.Controllers
 
             return NoContent();
         }
+
+        [HttpGet("system")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetSystemBalance()
+        {
+            var systemBalance = await _balanceService.GetSystemBalance();
+            if (systemBalance == null)
+            {
+                return NotFound("System balance not found");
+            }
+
+            return Ok(new { Balance = systemBalance.Balance });
+        }
+
+        [HttpPut("system")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateSystemBalance([FromBody] UpdateBalanceDto updateBalanceDto)
+        {
+            await _balanceService.UpdateSystemBalance(updateBalanceDto.NewBalance);
+            return NoContent();
+        }
+    
     }
 }

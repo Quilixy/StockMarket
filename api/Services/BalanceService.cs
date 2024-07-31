@@ -13,10 +13,14 @@ namespace api.Services
             _balanceRepository = balanceRepository;
         }
 
+        
+
+
         public async Task<AppUser> GetUserByUsername(string username)
         {
             return await _balanceRepository.GetUserByUsername(username);
         }
+
 
         public async Task UpdateUserBalance(string userId, decimal newBalance)
         {
@@ -26,6 +30,14 @@ namespace api.Services
                 user.Balance = newBalance;
                 await _balanceRepository.UpdateUserBalance(user);
             }
+        }
+        public async Task UpdateSystemBalance(decimal newBalance)
+        {
+            await _balanceRepository.UpdateSystemBalance(newBalance);
+        }
+        public async Task<SystemBalance> GetSystemBalance()
+        {
+            return await _balanceRepository.GetSystemBalance();
         }
     }
 }

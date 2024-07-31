@@ -8,5 +8,7 @@ namespace api.Interfaces
         Task<AppUser> GetUserById(string userId);
         Task<AppUser> GetUserByUsername(string username);
         Task UpdateUserBalance(AppUser user);
+        Task<SystemBalance> GetSystemBalance();
+        Task UpdateSystemBalance(decimal newBalance);
     }
 }
