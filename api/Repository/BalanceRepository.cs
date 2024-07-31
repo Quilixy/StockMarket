@@ -36,20 +36,27 @@ namespace api.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateSystemBalance(decimal newBalance)
+        public async Task UpdateSystemBalance(SystemBalance systemBalance)
         {
-           var systemBalance = await _context.SystemBalances.FirstOrDefaultAsync();
-            if (systemBalance != null)
+           var existingSystemBalance = await GetSystemBalance();
+            if (existingSystemBalance != null)
             {
-                systemBalance.Balance = newBalance;
-                _context.SystemBalances.Update(systemBalance);
-                await _context.SaveChangesAsync();
+                existingSystemBalance.Balance = systemBalance.Balance;
+                _context.SystemBalances.Update(existingSystemBalance);
             }
+            else
+            {
+                await _context.SystemBalances.AddAsync(systemBalance);
+            }
+            await _context.SaveChangesAsync();
         }
 
         public async Task<SystemBalance> GetSystemBalance()
         {
             return await _context.SystemBalances.FirstOrDefaultAsync();        
         }
+
+       
+
     }
 }

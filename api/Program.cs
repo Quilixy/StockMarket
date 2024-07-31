@@ -90,6 +90,10 @@ builder.Services.AddAuthentication(options => {
     };
 });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+});
 
 
 builder.Services.AddScoped<IStockRepository, StockRepository>();
@@ -109,6 +113,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
@@ -116,4 +122,3 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.Run();
-

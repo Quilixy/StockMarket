@@ -12,8 +12,8 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20240730202424_Init")]
-    partial class Init
+    [Migration("20240731122424_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,13 +54,13 @@ namespace api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "28d0d96d-5bca-47a9-b3d0-2dfd9e97de4f",
+                            Id = "1a12bf3b-5dae-45d6-a981-b812a6a92dbf",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "8b4e42e5-b6e2-473a-b854-f703c385a893",
+                            Id = "d1ce1aa2-1838-48db-b5e1-8b5fc6d3bc67",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -283,6 +283,22 @@ namespace api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Stocks");
+                });
+
+            modelBuilder.Entity("api.Models.SystemBalance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Balance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SystemBalances");
                 });
 
             modelBuilder.Entity("api.Models.Transaction", b =>

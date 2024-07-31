@@ -70,6 +70,19 @@ namespace api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SystemBalances",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Balance = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SystemBalances", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Transactions",
                 columns: table => new
                 {
@@ -224,8 +237,8 @@ namespace api.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "7a33dff3-3a28-4e17-a021-c7439ab4717b", null, "Admin", "ADMIN" },
-                    { "da08d8dc-bd69-4325-b5e0-07e6ee7e6e6c", null, "User", "USER" }
+                    { "1a12bf3b-5dae-45d6-a981-b812a6a92dbf", null, "Admin", "ADMIN" },
+                    { "d1ce1aa2-1838-48db-b5e1-8b5fc6d3bc67", null, "User", "USER" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -293,6 +306,9 @@ namespace api.Migrations
 
             migrationBuilder.DropTable(
                 name: "Portfolios");
+
+            migrationBuilder.DropTable(
+                name: "SystemBalances");
 
             migrationBuilder.DropTable(
                 name: "Transactions");

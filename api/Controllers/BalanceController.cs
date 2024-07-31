@@ -41,7 +41,7 @@ namespace api.Controllers
 
         // PUT api/balance
         [HttpPut]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> UpdateBalance([FromBody] UpdateBalanceDto updateBalanceDto)
         {
             var username = User.FindFirstValue(ClaimTypes.Name);
@@ -58,7 +58,7 @@ namespace api.Controllers
         }
 
         [HttpGet("system")]
-        [Authorize(Roles = "Admin")]
+        [Authorize] //(Roles = "ADMIN")
         public async Task<IActionResult> GetSystemBalance()
         {
             var systemBalance = await _balanceService.GetSystemBalance();
@@ -71,7 +71,7 @@ namespace api.Controllers
         }
 
         [HttpPut("system")]
-        [Authorize(Roles = "Admin")]
+        [Authorize] //(Roles = "Admin")
         public async Task<IActionResult> UpdateSystemBalance([FromBody] UpdateBalanceDto updateBalanceDto)
         {
             await _balanceService.UpdateSystemBalance(updateBalanceDto.NewBalance);

@@ -26,17 +26,20 @@ namespace api.Controllers
         private readonly IStockRepository _stockRepo;
         private readonly ITransactionRepository _transactionRepo;
         private readonly IPortfolioRepository _portfolioRepo;
+        private readonly IBalanceService _balanceService;
         private readonly decimal _commissionRate = 0.05m; // %5 komisyon
 
         public TransactionController(UserManager<AppUser> userManager,
         IStockRepository stockRepo,
         ITransactionRepository transactionRepo,
-        IPortfolioRepository portfolioRepo)
+        IPortfolioRepository portfolioRepo,
+        IBalanceService balanceService)
         {
             _userManager = userManager;
             _stockRepo = stockRepo;
             _transactionRepo = transactionRepo;
             _portfolioRepo = portfolioRepo;
+            _balanceService = balanceService;
         }
 
         [HttpPost("purchase")]
@@ -45,9 +48,12 @@ namespace api.Controllers
         {
             var username = User.GetUsername();
             var appUser = await _userManager.FindByNameAsync(username);
+            var systemBalance = await _balanceService.GetSystemBalance();
 
             var stock = await _stockRepo.GetBySymbolAsync(request.Symbol);
             if (stock == null) return BadRequest("Stock not found");
+
+            
 
             decimal totalCost = request.Quantity * stock.Price;
             decimal commission = totalCost * _commissionRate;
@@ -58,6 +64,17 @@ namespace api.Controllers
 
             appUser.Balance -= totalAmount;
             stock.Quantity -= request.Quantity;
+            if (systemBalance == null)
+            {
+                systemBalance = new SystemBalance { Balance = commission };
+            }
+            else
+            {
+                systemBalance.Balance += commission;
+                await _balanceService.UpdateSystemBalance(systemBalance.Balance);
+            }
+            
+            
 
             var transaction = new Transaction
             {
@@ -110,6 +127,7 @@ namespace api.Controllers
         {
             var username = User.GetUsername();
             var appUser = await _userManager.FindByNameAsync(username);
+            var systemBalance = await _balanceService.GetSystemBalance();
 
             var stock = await _stockRepo.GetBySymbolAsync(request.Symbol);
             if (stock == null) return BadRequest("Stock not found");
@@ -124,6 +142,15 @@ namespace api.Controllers
 
             appUser.Balance += totalAmount;
             stock.Quantity += request.Quantity;
+            if (systemBalance == null)
+            {
+                systemBalance = new SystemBalance { Balance = commission };
+            }
+            else
+            {
+                systemBalance.Balance += commission;
+                await _balanceService.UpdateSystemBalance(systemBalance.Balance);
+            }
 
             portfolio.Quantity -= request.Quantity;
             if (portfolio.Quantity == 0)

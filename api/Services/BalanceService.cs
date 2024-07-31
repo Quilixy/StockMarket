@@ -33,11 +33,28 @@ namespace api.Services
         }
         public async Task UpdateSystemBalance(decimal newBalance)
         {
-            await _balanceRepository.UpdateSystemBalance(newBalance);
+             var systemBalance = await _balanceRepository.GetSystemBalance();
+            if (systemBalance != null)
+            {
+                systemBalance.Balance = newBalance;
+                await _balanceRepository.UpdateSystemBalance(systemBalance);
+            }
+            else
+            {
+                systemBalance = new SystemBalance { Balance = newBalance };
+                await _balanceRepository.UpdateSystemBalance(systemBalance);
+            }
         }
         public async Task<SystemBalance> GetSystemBalance()
         {
-            return await _balanceRepository.GetSystemBalance();
+            //return await _balanceRepository.GetSystemBalance();
+            var systemBalance = await _balanceRepository.GetSystemBalance();
+            if (systemBalance == null)
+            {
+                systemBalance = new SystemBalance { Balance = 0 };
+                await _balanceRepository.UpdateSystemBalance(systemBalance);
+            }
+            return systemBalance;
         }
     }
 }

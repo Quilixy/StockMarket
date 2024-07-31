@@ -39,7 +39,7 @@ namespace api.Controllers
             return Ok(userPortfolio);
         }
 
- [HttpPost("add")]
+        [HttpPost("add")]
         [Authorize]
         public async Task<IActionResult> AddPortfolio([FromBody] Portfolio portfolio)
         {
