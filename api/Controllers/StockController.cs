@@ -48,6 +48,10 @@ namespace api.Controller
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateStockRequestDto stockDto)
         {
+            if (stockDto.Quantity == 0)
+            {
+                stockDto.Quantity = 10000;
+            }
             var stockModel = stockDto.ToStockFromCreateDTO();
             await _stockRepo.CreateAsync(stockModel);
             return CreatedAtAction(nameof(GetById), new {id = stockModel.Id}, stockModel.ToStockDto());

@@ -27,7 +27,7 @@ namespace api.Controllers
         }
 
         [HttpPost]
-        [Authorize] //(Policy = "AdminOnly")
+        [Authorize (Roles = "Admin")] //(Policy = "AdminOnly")
         public async Task<IActionResult> CreateBalanceCard([FromBody] CreateBalanceCardDto createBalanceCardDto)
         {
             await _balanceCardService.CreateBalanceCard(createBalanceCardDto);
@@ -51,7 +51,7 @@ namespace api.Controllers
             }
             catch (System.Exception ex)
             {
-                return BadRequest(ex.Message); // Hatanın daha iyi anlaşılması için
+                return BadRequest(ex.Message); 
             }
         }
     }
