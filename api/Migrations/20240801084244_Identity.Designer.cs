@@ -12,7 +12,7 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20240731122446_Identity")]
+    [Migration("20240801084244_Identity")]
     partial class Identity
     {
         /// <inheritdoc />
@@ -54,13 +54,13 @@ namespace api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "4567c27b-2748-4654-836f-08f79ec6c157",
+                            Id = "780a8bac-2df5-4e8e-b3d7-0c761bb956af",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "d7149c30-7275-4ac3-b2fd-90051b99dc0e",
+                            Id = "71e6a43e-6d59-4d1a-8ec3-3dab05970c83",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -238,6 +238,29 @@ namespace api.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("api.Models.BalanceCard", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BalanceCards");
                 });
 
             modelBuilder.Entity("api.Models.Portfolio", b =>

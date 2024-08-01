@@ -12,8 +12,8 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20240731122424_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240801084256_SeedRole")]
+    partial class SeedRole
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,13 +54,13 @@ namespace api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "1a12bf3b-5dae-45d6-a981-b812a6a92dbf",
+                            Id = "ed59031e-3b0c-48d9-84ff-04e3f876f08e",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "d1ce1aa2-1838-48db-b5e1-8b5fc6d3bc67",
+                            Id = "3b31eeff-1a14-4e09-84f0-b0c0360ac184",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -238,6 +238,29 @@ namespace api.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("api.Models.BalanceCard", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BalanceCards");
                 });
 
             modelBuilder.Entity("api.Models.Portfolio", b =>

@@ -15,20 +15,20 @@ namespace api.Migrations
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "4567c27b-2748-4654-836f-08f79ec6c157");
+                keyValue: "71e6a43e-6d59-4d1a-8ec3-3dab05970c83");
 
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "d7149c30-7275-4ac3-b2fd-90051b99dc0e");
+                keyValue: "780a8bac-2df5-4e8e-b3d7-0c761bb956af");
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "417a412e-9de1-45e0-b534-e228e3f5f203", null, "User", "USER" },
-                    { "537e36ae-f8c3-4a73-8dbf-e333329b22e1", null, "Admin", "ADMIN" }
+                    { "3b31eeff-1a14-4e09-84f0-b0c0360ac184", null, "User", "USER" },
+                    { "ed59031e-3b0c-48d9-84ff-04e3f876f08e", null, "Admin", "ADMIN" }
                 });
         }
 
@@ -38,20 +38,20 @@ namespace api.Migrations
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "417a412e-9de1-45e0-b534-e228e3f5f203");
+                keyValue: "3b31eeff-1a14-4e09-84f0-b0c0360ac184");
 
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "537e36ae-f8c3-4a73-8dbf-e333329b22e1");
+                keyValue: "ed59031e-3b0c-48d9-84ff-04e3f876f08e");
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "4567c27b-2748-4654-836f-08f79ec6c157", null, "Admin", "ADMIN" },
-                    { "d7149c30-7275-4ac3-b2fd-90051b99dc0e", null, "User", "USER" }
+                    { "71e6a43e-6d59-4d1a-8ec3-3dab05970c83", null, "User", "USER" },
+                    { "780a8bac-2df5-4e8e-b3d7-0c761bb956af", null, "Admin", "ADMIN" }
                 });
         }
     }

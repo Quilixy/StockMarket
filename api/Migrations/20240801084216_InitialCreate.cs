@@ -54,6 +54,21 @@ namespace api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "BalanceCards",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    IsUsed = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BalanceCards", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Stocks",
                 columns: table => new
                 {
@@ -237,8 +252,8 @@ namespace api.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "1a12bf3b-5dae-45d6-a981-b812a6a92dbf", null, "Admin", "ADMIN" },
-                    { "d1ce1aa2-1838-48db-b5e1-8b5fc6d3bc67", null, "User", "USER" }
+                    { "da6cadbe-7c88-4e4c-89b6-6c6f2a797f3c", null, "Admin", "ADMIN" },
+                    { "fd879d10-8220-4ad3-97fc-71e28b9c2002", null, "User", "USER" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -303,6 +318,9 @@ namespace api.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "BalanceCards");
 
             migrationBuilder.DropTable(
                 name: "Portfolios");

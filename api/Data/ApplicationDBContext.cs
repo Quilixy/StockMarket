@@ -21,6 +21,7 @@ namespace api.Data
         public DbSet<Portfolio> Portfolios { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<SystemBalance> SystemBalances { get; set; }
+        public DbSet<BalanceCard> BalanceCards { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

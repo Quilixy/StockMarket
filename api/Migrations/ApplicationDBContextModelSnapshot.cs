@@ -51,13 +51,13 @@ namespace api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "537e36ae-f8c3-4a73-8dbf-e333329b22e1",
+                            Id = "ed59031e-3b0c-48d9-84ff-04e3f876f08e",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "417a412e-9de1-45e0-b534-e228e3f5f203",
+                            Id = "3b31eeff-1a14-4e09-84f0-b0c0360ac184",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -235,6 +235,29 @@ namespace api.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("api.Models.BalanceCard", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BalanceCards");
                 });
 
             modelBuilder.Entity("api.Models.Portfolio", b =>
