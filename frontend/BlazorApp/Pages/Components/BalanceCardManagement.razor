@@ -1,0 +1,109 @@
+@using System.ComponentModel.DataAnnotations
+@using System.Text.Json
+@using System.Net.Http
+@using System.Text
+@page "/admin/balancecard"
+@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<PageTitle>Balance Card</PageTitle>
+
+<div class="balance-card">
+    <h3>Update Balance</h3>
+
+    <EditForm Model="@balanceCardModel" OnValidSubmit="@HandleSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="code">Code:</label>
+            <InputText id="code" class="form-control" @bind-Value="balanceCardModel.Code" />
+            <ValidationMessage For="@(() => balanceCardModel.Code)" />
+        </div>
+
+        <div class="form-group">
+            <label for="amount">Amount:</label>
+            <InputNumber id="amount" class="form-control" @bind-Value="balanceCardModel.Amount" />
+            <ValidationMessage For="@(() => balanceCardModel.Amount)" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Add Balance</button>
+    </EditForm>
+
+    @if (isLoading)
+    {
+        <p>Processing...</p>
+    }
+    else if (responseMessage != null)
+    {
+        <div class="alert @alertClass">
+            @responseMessage
+        </div>
+    }
+</div>
+
+@code {
+    private BalanceCardModel balanceCardModel = new BalanceCardModel();
+    private string responseMessage;
+    private string alertClass;
+    private bool isLoading = false;
+
+    private async Task HandleSubmit()
+    {
+        isLoading = true;
+        responseMessage = null;
+
+        try
+        {
+            var token = await localStorage.GetItemAsync<string>("token");
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                var request = new HttpRequestMessage(HttpMethod.Post, "http://localhost:5284/api/balancecard");
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                request.Content = new StringContent(
+                    JsonSerializer.Serialize(balanceCardModel),
+                    Encoding.UTF8,
+                    "application/json"
+                );
+
+                var response = await Http.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    responseMessage = "Balance updated successfully.";
+                    alertClass = "alert-success";
+                }
+                else
+                {
+                    responseMessage = "Failed to update balance: " + response.ReasonPhrase;
+                    alertClass = "alert-danger";
+                }
+            }
+            else
+            {
+                responseMessage = "No token found. Please login.";
+                alertClass = "alert-warning";
+            }
+        }
+        catch (Exception ex)
+        {
+            responseMessage = "Error: " + ex.Message;
+            alertClass = "alert-danger";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    public class BalanceCardModel
+    {
+        [Required(ErrorMessage = "Code is required.")]
+        public string Code { get; set; }
+
+        [Required(ErrorMessage = "Amount is required.")]
+        [Range(1, double.MaxValue, ErrorMessage = "Amount must be greater than 0.")]
+        public decimal Amount { get; set; }
+    }
+}

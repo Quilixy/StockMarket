@@ -1,0 +1,87 @@
+﻿@page "/portfolio"
+@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<PageTitle>Portfolio</PageTitle>
+
+<h3>@greetingMessage's Portfolio</h3>
+
+@if (isLoading)
+{
+    <p>Loading...</p>
+}
+else if (assets == null || assets.Count == 0)
+{
+    <p>No assets found in your portfolio.</p>
+}
+else
+{
+    <ul>
+        @foreach (var asset in assets)
+        {
+            <li>@asset.Name (@asset.Symbol): @asset.Quantity shares at $@asset.Price each</li>
+        }
+    </ul>
+}
+
+@code {
+    private string greetingMessage = "Hello";
+    private List<PortfolioModel> assets;
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var rememberMe = await localStorage.GetItemAsync<bool>("rememberMe");
+
+            if (rememberMe)
+            {
+                var username = await localStorage.GetItemAsync<string>("username");
+                var token = await localStorage.GetItemAsync<string>("token");
+                greetingMessage = $"Merhaba, {username}";
+
+                var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost:5284/api/portfolio");
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                var response = await Http.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    assets = await response.Content.ReadFromJsonAsync<List<PortfolioModel>>();
+                }
+                else
+                {
+                    Console.WriteLine("API isteği başarısız oldu: " + response.ReasonPhrase);
+                    assets = new List<PortfolioModel>();
+                }
+            }
+            else
+            {
+                greetingMessage = "Lütfen giriş yapın.";
+                assets = null;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Hata: " + ex.Message);
+            assets = new List<PortfolioModel>();
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+
+    public class PortfolioModel
+{
+    public int Id { get; set; }
+    public string Symbol { get; set; }
+    public string Name { get; set; }
+    public int Quantity { get; set; }
+    public decimal Price { get; set; }
+    public List<object> Portfolios { get; set; } // Bu alanı uygun şekilde tanımlayabilirsiniz.
+}
+
+}

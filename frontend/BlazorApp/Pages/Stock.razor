@@ -1,0 +1,94 @@
+﻿@page "/stocks"
+@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<PageTitle>Stocks</PageTitle>
+
+<h3>Stock List</h3>
+
+@if (isLoading)
+{
+    <p>Loading...</p>
+}
+else if (stocks == null || stocks.Count == 0)
+{
+    <p>No stocks found.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Symbol</th>
+                <th>Name</th>
+                <th>Quantity</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var stock in stocks)
+            {
+                <tr>
+                    <td>@stock.Symbol</td>
+                    <td>@stock.Name</td>
+                    <td>@stock.Quantity</td>
+                    <td>@stock.Price</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<StockModel> stocks;
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var token = await localStorage.GetItemAsync<string>("token");
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost:5284/api/stock");
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                var response = await Http.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    stocks = await response.Content.ReadFromJsonAsync<List<StockModel>>();
+                }
+                else
+                {
+                    Console.WriteLine("API request failed: " + response.ReasonPhrase);
+                    stocks = new List<StockModel>();
+                }
+            }
+            else
+            {
+                Console.WriteLine("No token found. Please login.");
+                stocks = null;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error: " + ex.Message);
+            stocks = new List<StockModel>();
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    public class StockModel
+    {
+        public int Id { get; set; }
+        public string Symbol { get; set; }
+        public string Name { get; set; }
+        public int Quantity { get; set; }
+        public decimal Price { get; set; }
+    }
+}

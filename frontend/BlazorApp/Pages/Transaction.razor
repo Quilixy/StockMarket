@@ -1,0 +1,141 @@
+﻿@page "/transaction"
+@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@using System.Net.Http.Headers
+@using System.Text.Json
+@using System.Text
+@using Microsoft.AspNetCore.Components.Forms
+
+<PageTitle>Transaction</PageTitle>
+
+<h3>New Transaction</h3>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <p style="color:red">@errorMessage</p>
+}
+
+<EditForm Model="@transactionModel" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <label for="transactionType">Transaction Type</label>
+    <select id="transactionType" @bind="transactionModel.IsPurchase">
+        <option value="true">Purchase</option>
+        <option value="false">Sell</option>
+    </select>
+
+    <label for="stock">Select Stock</label>
+    <select id="stock" @onchange="OnStockIdChanged">
+        <option value="">Select a stock</option>
+        @foreach (var stock in stocks)
+        {
+            <option value="@stock.Id">@stock.Name</option>
+        }
+    </select>
+
+    <label for="quantity">Quantity</label>
+    <InputNumber id="quantity" @bind-Value="transactionModel.Quantity" required />
+
+    <label for="price">Price</label>
+    <InputNumber id="price" @bind-Value="transactionModel.Price" disabled />
+
+    <label for="date">Date</label>
+    <InputDate id="date" @bind-Value="transactionModel.Date" required />
+
+    <button type="submit">Submit</button>
+</EditForm>
+
+@code {
+    private TransactionModel transactionModel = new TransactionModel();
+    private List<StockModel> stocks = new List<StockModel>();
+    private int? selectedStockId;
+    private string errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var response = await Http.GetAsync("https://localhost:5284/api/stock");
+            if (response.IsSuccessStatusCode)
+            {
+                var responseData = await response.Content.ReadAsStringAsync();
+                stocks = JsonSerializer.Deserialize<List<StockModel>>(responseData, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            }
+            else
+            {
+                errorMessage = $"Failed to load stocks. Status Code: {response.StatusCode}";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error: {ex.Message}";
+        }
+    }
+
+    private void OnStockIdChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value.ToString(), out int stockId))
+        {
+            selectedStockId = stockId;
+            OnStockChanged();
+        }
+    }
+
+    private void OnStockChanged()
+    {
+        if (selectedStockId.HasValue)
+        {
+            var selectedStock = stocks.FirstOrDefault(s => s.Id == selectedStockId.Value);
+            if (selectedStock != null)
+            {
+                transactionModel.Name = selectedStock.Name;
+                transactionModel.Price = selectedStock.Price;
+            }
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            var token = await localStorage.GetItemAsync<string>("token");
+            var endpoint = transactionModel.IsPurchase ? "https://localhost:5284/api/transaction/purchase" : "https://localhost:5284/api/transaction/sell";
+
+            var request = new HttpRequestMessage(HttpMethod.Post, endpoint);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            request.Content = new StringContent(JsonSerializer.Serialize(transactionModel), Encoding.UTF8, "application/json");
+
+            var response = await Http.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                transactionModel = new TransactionModel(); // Formu temizle
+            }
+            else
+            {
+                errorMessage = $"API request failed: {response.ReasonPhrase}";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error: {ex.Message}";
+        }
+    }
+
+    public class TransactionModel
+    {
+        public int StockId { get; set; }
+        public string Name { get; set; }
+        public int Quantity { get; set; }
+        public decimal Price { get; set; }
+        public DateTime Date { get; set; }
+        public bool IsPurchase { get; set; }
+    }
+
+    public class StockModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public decimal Price { get; set; }
+    }
+}

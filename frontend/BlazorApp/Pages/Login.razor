@@ -1,0 +1,88 @@
+﻿@page "/login"
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject Blazored.LocalStorage.ILocalStorageService localStorage 
+
+
+<PageTitle>Login</PageTitle>
+
+<EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <label for="username">Username</label>
+        <InputText id="username" @bind-Value="loginModel.Username" required />
+
+        <label for="password">Password</label>
+        <InputText id="password" @bind-Value="loginModel.Password" type="password" required />
+        
+        <label for="rememberMe">Remember Me</label>
+        <InputCheckbox id="rememberMe" @bind-Value="loginModel.RememberMe"/>
+
+        <button type="submit">login</button>
+    
+    </EditForm>
+
+
+
+@code {
+    private LoginModel loginModel = new LoginModel();
+
+    private async Task HandleLogin()
+    {
+        var response = await Http.PostAsJsonAsync("http://localhost:5284/api/account/login", loginModel);
+        var tokenResponse = await response.Content.ReadFromJsonAsync<TokenResponse>();
+
+        if (response.IsSuccessStatusCode)
+        {
+            //var tokenResponse = await response.Content.ReadFromJsonAsync<TokenResponse>();
+            if (loginModel.RememberMe)
+            {
+                // Beni hatırla verilerini yerel depolamaya kaydet
+                await localStorage.SetItemAsync("rememberMe", true);
+                await localStorage.SetItemAsync("username", loginModel.Username);
+                await localStorage.SetItemAsync("password", loginModel.Password);
+                await localStorage.SetItemAsync("token", tokenResponse.Token);
+
+            }
+            else
+            {
+                await localStorage.RemoveItemAsync("rememberMe");
+                await localStorage.RemoveItemAsync("username");
+                await localStorage.RemoveItemAsync("password");
+                await localStorage.RemoveItemAsync("token");
+            }
+
+            // Başarılı giriş sonrası yönlendirme
+            Navigation.NavigateTo("/");
+        }
+        else
+        {
+            // Hata işlemleri
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var rememberMe = await localStorage.GetItemAsync<bool>("rememberMe");
+        var response = await Http.PostAsJsonAsync("http://localhost:5284/api/account/login", loginModel);
+        var tokenResponse = await response.Content.ReadFromJsonAsync<TokenResponse>();
+        if (rememberMe)
+        {
+            loginModel.Username = await localStorage.GetItemAsync<string>("username");
+            loginModel.Password = await localStorage.GetItemAsync<string>("password");
+            loginModel.RememberMe = true;
+        }
+    }
+
+    public class LoginModel
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public bool RememberMe { get; set; }
+    }
+    public class TokenResponse
+    {
+        public string Token { get; set; }
+    }
+}

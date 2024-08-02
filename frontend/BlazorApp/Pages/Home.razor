@@ -1,0 +1,91 @@
+﻿@page "/"
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+<PageTitle>Home</PageTitle>
+
+<h1>@greetingMessage</h1>
+
+<p>Welcome to your new app.</p>
+
+@if (balance != null)
+{
+    <p>Current Balance: @balance</p>
+}
+else if (loading)
+{
+    <p>Loading balance...</p>
+}
+else
+{
+    <p>You are not logged in.</p>
+}
+
+@code {
+    private string greetingMessage = "Hello, world!";
+    private decimal? balance;
+    private bool loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var rememberMe = await localStorage.GetItemAsync<bool>("rememberMe");
+
+        if (rememberMe)
+        {
+            var username = await localStorage.GetItemAsync<string>("username");
+            greetingMessage = $"Merhaba, {username}!";
+
+            // API'den bakiyeyi al
+            await LoadBalanceAsync();
+        }
+        else
+        {
+            loading = false;
+        }
+    }
+
+    private async Task LoadBalanceAsync()
+    {
+        try
+        {
+            var token = await localStorage.GetItemAsync<string>("token");
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                Http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                var response = await Http.GetAsync("http://localhost:5284/api/balance");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var balanceResponse = await response.Content.ReadFromJsonAsync<BalanceResponse>();
+                    balance = balanceResponse?.Balance;
+                }
+                else
+                {
+                    // Hata yönetimi
+                    Console.WriteLine("Failed to load balance.");
+                }
+            }
+            else
+            {
+                // Token yoksa
+                Console.WriteLine("No token found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            // Hata yönetimi
+            Console.WriteLine($"Error loading balance: {ex.Message}");
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+    public class BalanceResponse
+    {
+        public decimal Balance { get; set; }
+    }
+}
+

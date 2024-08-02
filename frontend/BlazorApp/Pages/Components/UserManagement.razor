@@ -1,0 +1,278 @@
+@page "/admin/usermanagement"
+@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@using System.Net.Http.Headers;
+@using System.Text.Json;
+@using System.Text;
+
+<PageTitle>User Management</PageTitle>
+
+<div class="user-management">
+    <h3>User Management</h3>
+
+    @if (isLoading)
+    {
+        <p>Loading...</p>
+    }
+    else if (users == null || !users.Any())
+    {
+        <p>No users found.</p>
+    }
+    else
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>UserName</th>
+                    <th>Email</th>
+                    <th>Balance</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in users)
+                {
+                    <tr>
+                        <td>@user.UserName</td>
+                        <td>@user.Email</td>
+                        <td>@user.Balance.ToString("C")</td>
+                        <td>@user.Role</td>
+                        <td>
+                            <button class="btn btn-primary" @onclick="() => SelectUser(user)">Edit</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        @if (selectedUser != null)
+        {
+            <EditForm Model="@selectedUser" OnValidSubmit="@HandleUpdateRole">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="form-group">
+                    <label for="userRole">Role:</label>
+                    <InputText id="userRole" class="form-control" @bind-Value="selectedUser.Role" />
+                    <ValidationMessage For="@(() => selectedUser.Role)" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">Update Role</button>
+            </EditForm>
+        }
+
+        <EditForm Model="@balanceUpdate" OnValidSubmit="@HandleUpdateBalance">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-group">
+                <label for="balanceUserId">Select User for Balance Update:</label>
+                <select id="balanceUserId" class="form-control" @onchange="OnBalanceUserChange">
+                    <option value="">Select a user</option>
+                    @foreach (var user in users)
+                    {
+                        <option value="@user.Id">@user.UserName</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="userBalance">New Balance:</label>
+                <InputNumber id="userBalance" class="form-control" @bind-Value="balanceUpdate.NewBalance" />
+                <ValidationMessage For="@(() => balanceUpdate.NewBalance)" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Update Balance</button>
+        </EditForm>
+
+        @if (!string.IsNullOrEmpty(responseMessage))
+        {
+            <div class="alert @alertClass">
+                @responseMessage
+            </div>
+        }
+    }
+</div>
+
+@code {
+    private List<UserModel> users;
+    private UserModel selectedUser;
+    private bool isLoading = true;
+    private string responseMessage;
+    private string alertClass;
+
+    private BalanceUpdateModel balanceUpdate = new BalanceUpdateModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadUsers();
+    }
+
+    private async Task LoadUsers()
+    {
+        try
+        {
+            var token = await localStorage.GetItemAsync<string>("token");
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost:5284/api/user");
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var response = await Http.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    users = await response.Content.ReadFromJsonAsync<List<UserModel>>();
+                }
+                else
+                {
+                    responseMessage = "Failed to load users: " + response.ReasonPhrase;
+                    alertClass = "alert-danger";
+                    users = new List<UserModel>();
+                }
+            }
+            else
+            {
+                responseMessage = "No token found. Please login.";
+                alertClass = "alert-warning";
+                users = new List<UserModel>();
+            }
+        }
+        catch (Exception ex)
+        {
+            responseMessage = "Error: " + ex.Message;
+            alertClass = "alert-danger";
+            users = new List<UserModel>();
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void SelectUser(UserModel user)
+    {
+        selectedUser = user;
+    }
+
+    private async Task OnBalanceUserChange(ChangeEventArgs e)
+    {
+        string userId = e.Value.ToString();
+        balanceUpdate.UserId = userId;
+    }
+
+    private async Task HandleUpdateRole()
+    {
+        if (selectedUser == null)
+        {
+            responseMessage = "No user selected.";
+            alertClass = "alert-warning";
+            return;
+        }
+
+        try
+        {
+            var token = await localStorage.GetItemAsync<string>("token");
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                var request = new HttpRequestMessage(HttpMethod.Put, $"http://localhost:5284/api/user/{selectedUser.Id}/role");
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                request.Content = new StringContent(
+                    JsonSerializer.Serialize(new { Role = selectedUser.Role }),
+                    Encoding.UTF8,
+                    "application/json"
+                );
+
+                var response = await Http.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    responseMessage = "Role updated successfully.";
+                    alertClass = "alert-success";
+                }
+                else
+                {
+                    responseMessage = "Failed to update role: " + response.ReasonPhrase;
+                    alertClass = "alert-danger";
+                }
+            }
+            else
+            {
+                responseMessage = "No token found. Please login.";
+                alertClass = "alert-warning";
+            }
+        }
+        catch (Exception ex)
+        {
+            responseMessage = "Error: " + ex.Message;
+            alertClass = "alert-danger";
+        }
+    }
+
+    private async Task HandleUpdateBalance()
+    {
+        if (string.IsNullOrEmpty(balanceUpdate.UserId))
+        {
+            responseMessage = "No user selected.";
+            alertClass = "alert-warning";
+            return;
+        }
+
+        try
+        {
+            var token = await localStorage.GetItemAsync<string>("token");
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                var request = new HttpRequestMessage(HttpMethod.Put, "http://localhost:5284/api/balance");
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                request.Content = new StringContent(
+                    JsonSerializer.Serialize(new { UserId = balanceUpdate.UserId, NewBalance = balanceUpdate.NewBalance }),
+                    Encoding.UTF8,
+                    "application/json"
+                );
+
+                var response = await Http.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    responseMessage = "Balance updated successfully.";
+                    alertClass = "alert-success";
+                }
+                else
+                {
+                    responseMessage = "Failed to update balance: " + response.ReasonPhrase;
+                    alertClass = "alert-danger";
+                }
+            }
+            else
+            {
+                responseMessage = "No token found. Please login.";
+                alertClass = "alert-warning";
+            }
+        }
+        catch (Exception ex)
+        {
+            responseMessage = "Error: " + ex.Message;
+            alertClass = "alert-danger";
+        }
+    }
+
+    public class BalanceUpdateModel
+    {
+        public string UserId { get; set; }
+        public decimal NewBalance { get; set; }
+    }
+
+    public class UserModel
+    {
+        public string Id { get; set; }
+        public string UserName { get; set; }
+        public string Email { get; set; }
+        public decimal Balance { get; set; }
+        public string Role { get; set; } 
+    }
+}
