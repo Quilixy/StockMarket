@@ -61,13 +61,13 @@ namespace api.Controller
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateStockRequestDto updateDto)
         {
             var stockModel = await _stockRepo.UpdateAsync(id, updateDto);
-            if(stockModel == null)
+            //var stockModel = await _stockRepo.GetBySymbolAsync(updateDto.Symbol);
+            if (stockModel == null)
             {
                 return NotFound();
             }
-          
+            
             await _context.SaveChangesAsync();
-
             return Ok(stockModel.ToStockDto());
         }
 

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "mQ7O/VlIxRw=",
+  "dgSpecHash": "svAZVf6yrng=",
   "success": true,
-  "projectFilePath": "c:\\Users\\yldry\\Desktop\\Projetcs\\Staj\\Yeni klasör\\frontend\\BlazorApp\\BlazorApp.csproj",
+  "projectFilePath": "C:\\Users\\yldry\\Desktop\\Projetcs\\Staj\\Yeni klasör\\frontend\\BlazorApp\\BlazorApp.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\yldry\\.nuget\\packages\\blazored.localstorage\\4.5.0\\blazored.localstorage.4.5.0.nupkg.sha512",
     "C:\\Users\\yldry\\.nuget\\packages\\microsoft.aspnetcore.authorization\\8.0.7\\microsoft.aspnetcore.authorization.8.0.7.nupkg.sha512",
@@ -35,7 +35,6 @@
     "C:\\Users\\yldry\\.nuget\\packages\\microsoft.jsinterop.webassembly\\8.0.7\\microsoft.jsinterop.webassembly.8.0.7.nupkg.sha512",
     "C:\\Users\\yldry\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.7\\microsoft.net.illink.tasks.8.0.7.nupkg.sha512",
     "C:\\Users\\yldry\\.nuget\\packages\\microsoft.net.sdk.webassembly.pack\\8.0.7\\microsoft.net.sdk.webassembly.pack.8.0.7.nupkg.sha512",
-    "C:\\Users\\yldry\\.nuget\\packages\\system.componentmodel.annotations\\5.0.0\\system.componentmodel.annotations.5.0.0.nupkg.sha512",
     "C:\\Users\\yldry\\.nuget\\packages\\system.identitymodel.tokens.jwt\\8.0.1\\system.identitymodel.tokens.jwt.8.0.1.nupkg.sha512",
     "C:\\Users\\yldry\\.nuget\\packages\\system.io.pipelines\\8.0.0\\system.io.pipelines.8.0.0.nupkg.sha512",
     "C:\\Users\\yldry\\.nuget\\packages\\system.text.encodings.web\\8.0.0\\system.text.encodings.web.8.0.0.nupkg.sha512",

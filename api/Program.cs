@@ -28,11 +28,15 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient();
 
-builder.Services.AddScoped(sp =>
-    new HttpClient
-    {
-        BaseAddress = new Uri(builder.Configuration["https://localhost:5248"] ?? "https://localhost:5002")
-    });
+builder.Services.AddHttpClient<StockDataFetcher>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["https://localhost:5248"] ?? "https://localhost:5002");
+})
+.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+{
+    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+});
+
 
 
 
@@ -121,6 +125,9 @@ builder.Services.AddScoped<IBalanceService, BalanceService>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<IBalanceCardRepository , BalanceCardRepository>();
 builder.Services.AddScoped<IBalanceCardService, BalanceCardService>();
+builder.Services.AddSingleton<StockDataFetcher>();
+builder.Services.AddHostedService<StockBackgroundService>();
+
 
 
 

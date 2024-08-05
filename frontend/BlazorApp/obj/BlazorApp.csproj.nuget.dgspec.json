@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\yldry\\Desktop\\Projetcs\\Staj\\Yeni klasör\\frontend\\BlazorApp\\BlazorApp.csproj": {}
+    "C:\\Users\\yldry\\Desktop\\Projetcs\\Staj\\Yeni klasör\\frontend\\BlazorApp\\BlazorApp.csproj": {}
   },
   "projects": {
-    "c:\\Users\\yldry\\Desktop\\Projetcs\\Staj\\Yeni klasör\\frontend\\BlazorApp\\BlazorApp.csproj": {
+    "C:\\Users\\yldry\\Desktop\\Projetcs\\Staj\\Yeni klasör\\frontend\\BlazorApp\\BlazorApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\yldry\\Desktop\\Projetcs\\Staj\\Yeni klasör\\frontend\\BlazorApp\\BlazorApp.csproj",
+        "projectUniqueName": "C:\\Users\\yldry\\Desktop\\Projetcs\\Staj\\Yeni klasör\\frontend\\BlazorApp\\BlazorApp.csproj",
         "projectName": "BlazorApp",
-        "projectPath": "c:\\Users\\yldry\\Desktop\\Projetcs\\Staj\\Yeni klasör\\frontend\\BlazorApp\\BlazorApp.csproj",
+        "projectPath": "C:\\Users\\yldry\\Desktop\\Projetcs\\Staj\\Yeni klasör\\frontend\\BlazorApp\\BlazorApp.csproj",
         "packagesPath": "C:\\Users\\yldry\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\yldry\\Desktop\\Projetcs\\Staj\\Yeni klasör\\frontend\\BlazorApp\\obj\\",
+        "outputPath": "C:\\Users\\yldry\\Desktop\\Projetcs\\Staj\\Yeni klasör\\frontend\\BlazorApp\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\yldry\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -78,10 +78,6 @@
               "target": "Package",
               "version": "[8.0.7, )",
               "autoReferenced": true
-            },
-            "System.ComponentModel.Annotations": {
-              "target": "Package",
-              "version": "[5.0.0, )"
             },
             "System.IdentityModel.Tokens.Jwt": {
               "target": "Package",

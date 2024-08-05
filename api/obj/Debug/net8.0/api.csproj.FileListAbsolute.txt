@@ -286,3 +286,4 @@ C:\Users\yldry\Desktop\Projetcs\Staj\Yeni klasör\api\obj\Debug\net8.0\refint\ap
 C:\Users\yldry\Desktop\Projetcs\Staj\Yeni klasör\api\obj\Debug\net8.0\api.pdb
 C:\Users\yldry\Desktop\Projetcs\Staj\Yeni klasör\api\obj\Debug\net8.0\api.genruntimeconfig.cache
 C:\Users\yldry\Desktop\Projetcs\Staj\Yeni klasör\api\obj\Debug\net8.0\ref\api.dll
+C:\Users\yldry\Desktop\Projetcs\Staj\Yeni klasör\api\bin\Debug\net8.0\HtmlAgilityPack.dll

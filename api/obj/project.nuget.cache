@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "RhohSgmxMqE=",
+  "dgSpecHash": "80yPXt1FoHs=",
   "success": true,
   "projectFilePath": "C:\\Users\\yldry\\Desktop\\Projetcs\\Staj\\Yeni klasör\\api\\api.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\yldry\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\yldry\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",
+    "C:\\Users\\yldry\\.nuget\\packages\\htmlagilitypack\\1.11.62\\htmlagilitypack.1.11.62.nupkg.sha512",
     "C:\\Users\\yldry\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\yldry\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\8.0.0\\microsoft.aspnetcore.authentication.jwtbearer.8.0.0.nupkg.sha512",
     "C:\\Users\\yldry\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\8.0.0\\microsoft.aspnetcore.cryptography.internal.8.0.0.nupkg.sha512",
