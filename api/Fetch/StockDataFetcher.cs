@@ -110,7 +110,8 @@ public class StockDataFetcher
                         Id = existingStock.Id,
                         Symbol = stock.Symbol,
                         Name = stock.Name,
-                        Price = stock.Price
+                        Price = stock.Price,
+                        Quantity = stock.Quantity,
                     };
                     var updateContent = new StringContent(JsonConvert.SerializeObject(updateStock), Encoding.UTF8, "application/json");
                     var putUrl = $"{baseUrl}/{existingStock.Id}";

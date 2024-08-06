@@ -20,7 +20,8 @@
     <ValidationSummary />
 
     <label for="transactionType">Transaction Type</label>
-    <select id="transactionType" @bind="transactionModel.IsPurchase">
+    <select id="transactionType" @onchange="OnTransactionTypeChanged">
+        <option value="">Select a transaction type</option>
         <option value="true">Purchase</option>
         <option value="false">Sell</option>
     </select>
@@ -30,7 +31,7 @@
         <option value="">Select a stock</option>
         @foreach (var stock in stocks)
         {
-            <option value="@stock.Id">@stock.Name</option>
+            <option value="@stock.Symbol">@stock.Name</option>
         }
     </select>
 
@@ -38,10 +39,7 @@
     <InputNumber id="quantity" @bind-Value="transactionModel.Quantity" required />
 
     <label for="price">Price</label>
-    <InputNumber id="price" @bind-Value="transactionModel.Price" disabled />
-
-    <label for="date">Date</label>
-    <InputDate id="date" @bind-Value="transactionModel.Date" required />
+    <InputNumber id="price" @bind-Value="selectedStockPrice" disabled />
 
     <button type="submit">Submit</button>
 </EditForm>
@@ -49,14 +47,14 @@
 @code {
     private TransactionModel transactionModel = new TransactionModel();
     private List<StockModel> stocks = new List<StockModel>();
-    private int? selectedStockId;
+    private decimal selectedStockPrice;
     private string errorMessage;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            var response = await Http.GetAsync("https://localhost:5284/api/stock");
+            var response = await Http.GetAsync("http://localhost:5284/api/stock");
             if (response.IsSuccessStatusCode)
             {
                 var responseData = await response.Content.ReadAsStringAsync();
@@ -73,25 +71,34 @@
         }
     }
 
-    private void OnStockIdChanged(ChangeEventArgs e)
+    private void OnTransactionTypeChanged(ChangeEventArgs e)
     {
-        if (int.TryParse(e.Value.ToString(), out int stockId))
+        if (e.Value != null)
         {
-            selectedStockId = stockId;
-            OnStockChanged();
+            var selectedValue = e.Value.ToString();
+            if (bool.TryParse(selectedValue, out bool isPurchase))
+            {
+                transactionModel.IsPurchase = isPurchase;
+            }
         }
     }
 
-    private void OnStockChanged()
+    private void OnStockIdChanged(ChangeEventArgs e)
     {
-        if (selectedStockId.HasValue)
+        var selectedSymbol = e.Value.ToString();
+        if (!string.IsNullOrEmpty(selectedSymbol))
         {
-            var selectedStock = stocks.FirstOrDefault(s => s.Id == selectedStockId.Value);
-            if (selectedStock != null)
-            {
-                transactionModel.Name = selectedStock.Name;
-                transactionModel.Price = selectedStock.Price;
-            }
+            transactionModel.Symbol = selectedSymbol;
+            UpdateStockPrice(selectedSymbol);
+        }
+    }
+
+    private void UpdateStockPrice(string symbol)
+    {
+        var selectedStock = stocks.FirstOrDefault(s => s.Symbol == symbol);
+        if (selectedStock != null)
+        {
+            selectedStockPrice = selectedStock.Price;
         }
     }
 
@@ -100,20 +107,28 @@
         try
         {
             var token = await localStorage.GetItemAsync<string>("token");
-            var endpoint = transactionModel.IsPurchase ? "https://localhost:5284/api/transaction/purchase" : "https://localhost:5284/api/transaction/sell";
+            var endpoint = transactionModel.IsPurchase ? "http://localhost:5284/api/transaction/purchase" : "http://localhost:5284/api/transaction/sell";
+
+            var requestBody = new
+            {
+                symbol = transactionModel.Symbol,
+                quantity = transactionModel.Quantity
+            };
 
             var request = new HttpRequestMessage(HttpMethod.Post, endpoint);
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            request.Content = new StringContent(JsonSerializer.Serialize(transactionModel), Encoding.UTF8, "application/json");
+            request.Content = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
 
             var response = await Http.SendAsync(request);
             if (response.IsSuccessStatusCode)
             {
                 transactionModel = new TransactionModel(); // Formu temizle
+                selectedStockPrice = 0; // Fiyatı sıfırla
             }
             else
             {
-                errorMessage = $"API request failed: {response.ReasonPhrase}";
+                var responseContent = await response.Content.ReadAsStringAsync();
+                errorMessage = $"API request failed: {response.ReasonPhrase}, {responseContent}";
             }
         }
         catch (Exception ex)
@@ -124,17 +139,14 @@
 
     public class TransactionModel
     {
-        public int StockId { get; set; }
-        public string Name { get; set; }
+        public string Symbol { get; set; }
         public int Quantity { get; set; }
-        public decimal Price { get; set; }
-        public DateTime Date { get; set; }
         public bool IsPurchase { get; set; }
     }
 
     public class StockModel
     {
-        public int Id { get; set; }
+        public string Symbol { get; set; }
         public string Name { get; set; }
         public decimal Price { get; set; }
     }

@@ -10,5 +10,7 @@ namespace api.Interfaces
     {
         Task CreateAsync(Transaction transaction);
         Task<IEnumerable<Transaction>> GetUserTransactionsAsync(string userId);
+        Task<IEnumerable<Transaction>> GetByUserIdAsync(string userId);
+
     }
 }

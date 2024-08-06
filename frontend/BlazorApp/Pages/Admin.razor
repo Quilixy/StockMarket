@@ -13,6 +13,17 @@
 
     <button @onclick="NavigateToPage1">Add Balance Card</button>
     <button @onclick="NavigateToPage2">User Management</button>
+
+    @if (systemBalance.HasValue)
+    {
+        <div>
+            <h2>System Balance: @systemBalance.Value</h2>
+        </div>
+    }
+    else
+    {
+        <p>Unable to fetch system balance.</p>
+    }
 }
 else if (loading)
 {
@@ -23,9 +34,11 @@ else
     <p>You do not have access to this page.</p>
 }
 
+
 @code {
     private bool isAdmin = false;
     private bool loading = true;
+    private decimal? systemBalance;
 
     protected override async Task OnInitializedAsync()
     {
@@ -39,6 +52,9 @@ else
             if (role == "Admin") 
             {
                 isAdmin = true;
+
+                // Sistem bakiyesini al
+                await FetchSystemBalanceAsync();
             }
             else
             {
@@ -75,6 +91,56 @@ else
 
         return role;
     }
+
+    private async Task FetchSystemBalanceAsync()
+    {
+        try
+        {
+            var token = await localStorage.GetItemAsync<string>("token");
+
+            if (string.IsNullOrEmpty(token))
+            {
+                Console.WriteLine("Token not found.");
+                return;
+            }
+
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, "http://localhost:5284/api/balance/system");
+            requestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            var response = await Http.SendAsync(requestMessage);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonResponse = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Raw balance response: {jsonResponse}");
+
+                var balanceResponse = System.Text.Json.JsonSerializer.Deserialize<BalanceResponse>(jsonResponse);
+
+                if (balanceResponse != null)
+                {
+                    systemBalance = balanceResponse.Balance;
+                }
+                else
+                {
+                    Console.WriteLine("Failed to parse system balance.");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Failed to fetch system balance. Status code: {response.StatusCode}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred while fetching system balance: {ex.Message}");
+        }
+    }
+
+public class BalanceResponse
+{
+    public decimal Balance { get; set; }
+}
+
 
     private void NavigateToPage1()
     {

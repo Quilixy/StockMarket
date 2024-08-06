@@ -189,6 +189,32 @@ namespace api.Controllers
 
             return Ok();
         }
+        [HttpGet("history")]
+        [Authorize]
+        public async Task<IActionResult> GetTransactionHistory()
+        {
+            var username = User.GetUsername();
+            var appUser = await _userManager.FindByNameAsync(username);
+
+            var transactions = await _transactionRepo.GetByUserIdAsync(appUser.Id);
+
+            if (transactions == null || !transactions.Any())
+            {
+                return NotFound("No transactions found for the user.");
+            }
+
+            var transactionDtos = transactions.Select(t => new TransactionDto
+            {
+                Symbol = t.Symbol,
+                Quantity = t.Quantity,
+                Price = t.Price,
+                TotalAmount = t.TotalAmount,
+                IsPurchase = t.IsPurchase,
+                Date = t.Date
+            }).ToList();
+
+            return Ok(transactionDtos);
+        }
     }    
 }
 

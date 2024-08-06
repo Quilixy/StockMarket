@@ -12,6 +12,11 @@
 @if (balance != null)
 {
     <p>Current Balance: @balance</p>
+    <div>
+        <label for="balanceCardCode">Enter BalanceCard Code:</label>
+        <input id="balanceCardCode" @bind="balanceCardCode" />
+        <button @onclick="UseBalanceCard">Use BalanceCard</button>
+    </div>
 }
 else if (loading)
 {
@@ -26,6 +31,7 @@ else
     private string greetingMessage = "Hello, world!";
     private decimal? balance;
     private bool loading = true;
+    private string balanceCardCode;
 
     protected override async Task OnInitializedAsync()
     {
@@ -83,9 +89,57 @@ else
             loading = false;
         }
     }
+
+    private async Task UseBalanceCard()
+    {
+        if (string.IsNullOrWhiteSpace(balanceCardCode))
+        {
+            Console.WriteLine("BalanceCard code is empty.");
+            return;
+        }
+
+        try
+        {
+            var token = await localStorage.GetItemAsync<string>("token");
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                Http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                var request = new BalanceCardRequest { Code = balanceCardCode };
+                var response = await Http.PostAsJsonAsync("http://localhost:5284/api/balancecard/use", request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("BalanceCard used successfully.");
+                    // Gerekirse bakiye güncellemesini tekrar yükleyin
+                    await LoadBalanceAsync();
+                }
+                else
+                {
+                    // Hata yönetimi
+                    Console.WriteLine("Failed to use BalanceCard.");
+                }
+            }
+            else
+            {
+                // Token yoksa
+                Console.WriteLine("No token found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            // Hata yönetimi
+            Console.WriteLine($"Error using BalanceCard: {ex.Message}");
+        }
+    }
+
     public class BalanceResponse
     {
         public decimal Balance { get; set; }
     }
-}
 
+    public class BalanceCardRequest
+    {
+        public string Code { get; set; }
+    }
+}

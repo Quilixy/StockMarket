@@ -1,0 +1,63 @@
+@page "/transaction-history"
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+<PageTitle>Transaction History</PageTitle>
+
+<h3>Transaction History</h3>
+
+@if (transactionHistory == null)
+{
+    <p>Loading...</p>
+}
+else if (!transactionHistory.Any())
+{
+    <p>No transactions found.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Symbol</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Amount</th>
+                <th>Transaction Date</th>
+                <th>Type</th> 
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var transaction in transactionHistory)
+            {
+                <tr>
+                    <td>@transaction.Symbol</td>
+                    <td>@transaction.Quantity</td>
+                    <td>@transaction.Price</td>
+                    <td>@transaction.TotalAmount</td>
+                    <td>@transaction.TransactionDate</td>
+                    <td>@(transaction.IsPurchase ? "Purchase" : "Sale")</td> 
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<TransactionHistoryDto> transactionHistory;
+
+    protected override async Task OnInitializedAsync()
+    {
+        transactionHistory = await Http.GetFromJsonAsync<List<TransactionHistoryDto>>("http://localhost:5284/api/transaction/history");
+    }
+
+    public class TransactionHistoryDto
+    {
+        public string Symbol { get; set; }
+        public int Quantity { get; set; }
+        public decimal Price { get; set; }
+        public decimal TotalAmount { get; set; }
+        public DateTime TransactionDate { get; set; }
+        public bool IsPurchase { get; set; }
+    }
+}

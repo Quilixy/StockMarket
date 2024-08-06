@@ -24,6 +24,13 @@ namespace api.Repository
             await _context.SaveChangesAsync();
         }
 
+        public async Task<IEnumerable<Transaction>> GetByUserIdAsync(string userId)
+        {
+            return await _context.Transactions
+            .Where(t => t.UserId == userId)
+            .ToListAsync();
+        }
+
         public async Task<IEnumerable<Transaction>> GetUserTransactionsAsync(string userId)
         {
             return await _context.Transactions
