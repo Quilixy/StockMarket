@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "zJGsg9E9pRYu+CWNmnMJTk8frLbHSshh7PLYTw+Z4N4=",
+  "Hash": "LpNEf+tKCLkZ0ZMKgdA1RGAeYR4wm3swY9wYzr82Mpo=",
   "Source": "BlazorApp",
   "BasePath": "/",
   "Mode": "Root",
@@ -908,6 +908,25 @@
       "CopyToOutputDirectory": "PreserveNewest",
       "CopyToPublishDirectory": "Never",
       "OriginalItemSpec": "C:\\Users\\yldry\\Desktop\\Projetcs\\Staj\\Yeni klasör\\frontend\\BlazorApp\\obj\\Debug\\net8.0\\webcil\\netstandard.wasm"
+    },
+    {
+      "Identity": "C:\\Users\\yldry\\Desktop\\Projetcs\\Staj\\Yeni klasör\\frontend\\BlazorApp\\bin\\Debug\\net8.0\\wwwroot\\_framework\\Newtonsoft.Json.wasm",
+      "SourceId": "BlazorApp",
+      "SourceType": "Computed",
+      "ContentRoot": "C:\\Users\\yldry\\Desktop\\Projetcs\\Staj\\Yeni klasör\\frontend\\BlazorApp\\bin\\Debug\\net8.0\\wwwroot\\",
+      "BasePath": "/",
+      "RelativePath": "_framework/Newtonsoft.Json.wasm",
+      "AssetKind": "Build",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "WasmResource",
+      "AssetTraitValue": "runtime",
+      "CopyToOutputDirectory": "PreserveNewest",
+      "CopyToPublishDirectory": "Never",
+      "OriginalItemSpec": "C:\\Users\\yldry\\Desktop\\Projetcs\\Staj\\Yeni klasör\\frontend\\BlazorApp\\obj\\Debug\\net8.0\\webcil\\Newtonsoft.Json.wasm"
     },
     {
       "Identity": "C:\\Users\\yldry\\Desktop\\Projetcs\\Staj\\Yeni klasör\\frontend\\BlazorApp\\bin\\Debug\\net8.0\\wwwroot\\_framework\\System.AppContext.wasm",
@@ -6266,6 +6285,25 @@
       "CopyToOutputDirectory": "PreserveNewest",
       "CopyToPublishDirectory": "Never",
       "OriginalItemSpec": "C:\\Users\\yldry\\Desktop\\Projetcs\\Staj\\Yeni klasör\\frontend\\BlazorApp\\bin\\Debug\\net8.0\\wwwroot\\_framework\\System.Diagnostics.Debug.wasm"
+    },
+    {
+      "Identity": "C:\\Users\\yldry\\Desktop\\Projetcs\\Staj\\Yeni klasör\\frontend\\BlazorApp\\obj\\Debug\\net8.0\\compressed\\jwwyh17hfd.gz",
+      "SourceId": "BlazorApp",
+      "SourceType": "Computed",
+      "ContentRoot": "C:\\Users\\yldry\\Desktop\\Projetcs\\Staj\\Yeni klasör\\frontend\\BlazorApp\\bin\\Debug\\net8.0\\wwwroot\\",
+      "BasePath": "/",
+      "RelativePath": "_framework/Newtonsoft.Json.wasm.gz",
+      "AssetKind": "Build",
+      "AssetMode": "All",
+      "AssetRole": "Alternative",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "C:\\Users\\yldry\\Desktop\\Projetcs\\Staj\\Yeni klasör\\frontend\\BlazorApp\\bin\\Debug\\net8.0\\wwwroot\\_framework\\Newtonsoft.Json.wasm",
+      "AssetTraitName": "Content-Encoding",
+      "AssetTraitValue": "gzip",
+      "CopyToOutputDirectory": "PreserveNewest",
+      "CopyToPublishDirectory": "Never",
+      "OriginalItemSpec": "C:\\Users\\yldry\\Desktop\\Projetcs\\Staj\\Yeni klasör\\frontend\\BlazorApp\\bin\\Debug\\net8.0\\wwwroot\\_framework\\Newtonsoft.Json.wasm"
     },
     {
       "Identity": "C:\\Users\\yldry\\Desktop\\Projetcs\\Staj\\Yeni klasör\\frontend\\BlazorApp\\obj\\Debug\\net8.0\\compressed\\k2lgz2nwnp.gz",

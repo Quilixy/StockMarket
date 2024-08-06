@@ -2097,3 +2097,8 @@ C:\Users\yldry\Desktop\Projetcs\Staj\Yeni klasör\frontend\BlazorApp\obj\Debug\n
 C:\Users\yldry\Desktop\Projetcs\Staj\Yeni klasör\frontend\BlazorApp\obj\Debug\net8.0\compressed\8mbmxkysgg.gz
 C:\Users\yldry\Desktop\Projetcs\Staj\Yeni klasör\frontend\BlazorApp\obj\Debug\net8.0\compressed\rpdwe10c7l.gz
 C:\Users\yldry\Desktop\Projetcs\Staj\Yeni klasör\frontend\BlazorApp\obj\Debug\net8.0\compressed\h699gwq1ii.gz
+C:\Users\yldry\Desktop\Projetcs\Staj\Yeni klasör\frontend\BlazorApp\bin\Debug\net8.0\wwwroot\_framework\Newtonsoft.Json.wasm
+C:\Users\yldry\Desktop\Projetcs\Staj\Yeni klasör\frontend\BlazorApp\bin\Debug\net8.0\wwwroot\_framework\Newtonsoft.Json.wasm.gz
+C:\Users\yldry\Desktop\Projetcs\Staj\Yeni klasör\frontend\BlazorApp\bin\Debug\net8.0\Newtonsoft.Json.dll
+C:\Users\yldry\Desktop\Projetcs\Staj\Yeni klasör\frontend\BlazorApp\obj\Debug\net8.0\webcil\Newtonsoft.Json.wasm
+C:\Users\yldry\Desktop\Projetcs\Staj\Yeni klasör\frontend\BlazorApp\obj\Debug\net8.0\compressed\jwwyh17hfd.gz

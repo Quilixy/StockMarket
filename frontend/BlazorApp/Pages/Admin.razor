@@ -5,7 +5,11 @@
 
 <PageTitle>Admin Page</PageTitle>
 
-@if (isAdmin)
+@if (loading)
+{
+    <p>Loading...</p>
+}
+else if (isAdmin)
 {
     <h1>Welcome to the Admin Page</h1>
     <p>This content is only for administrators.</p>
@@ -17,7 +21,7 @@
     @if (systemBalance.HasValue)
     {
         <div>
-            <h2>System Balance: @systemBalance.Value</h2>
+            <h1>System Balance: @systemBalance.Value</h1>
         </div>
     }
     else
@@ -25,15 +29,10 @@
         <p>Unable to fetch system balance.</p>
     }
 }
-else if (loading)
-{
-    <p>Loading...</p>
-}
 else
 {
     <p>You do not have access to this page.</p>
 }
-
 
 @code {
     private bool isAdmin = false;
@@ -47,28 +46,24 @@ else
         if (!string.IsNullOrEmpty(token))
         {
             var role = GetRoleFromToken(token);
-            Console.WriteLine($"Token role: {role}");
 
             if (role == "Admin") 
             {
                 isAdmin = true;
-
-                // Sistem bakiyesini al
                 await FetchSystemBalanceAsync();
             }
             else
             {
-                Console.WriteLine("User is not an admin.");
                 Navigation.NavigateTo("/");
             }
         }
         else
         {
-            Console.WriteLine("Token not found.");
             Navigation.NavigateTo("/login");
         }
 
         loading = false;
+        StateHasChanged();
     }
 
     private string GetRoleFromToken(string token)
@@ -76,20 +71,7 @@ else
         var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
         var jsonToken = handler.ReadToken(token) as System.IdentityModel.Tokens.Jwt.JwtSecurityToken;
 
-        if (jsonToken == null)
-        {
-            Console.WriteLine("Invalid token.");
-            return null;
-        }
-
-        var role = jsonToken.Claims.FirstOrDefault(claim => claim.Type == "role")?.Value;
-
-        if (role == null)
-        {
-            Console.WriteLine("Role claim not found.");
-        }
-
-        return role;
+        return jsonToken?.Claims.FirstOrDefault(claim => claim.Type == "role")?.Value;
     }
 
     private async Task FetchSystemBalanceAsync()
@@ -114,11 +96,12 @@ else
                 var jsonResponse = await response.Content.ReadAsStringAsync();
                 Console.WriteLine($"Raw balance response: {jsonResponse}");
 
-                var balanceResponse = System.Text.Json.JsonSerializer.Deserialize<BalanceResponse>(jsonResponse);
+                var balanceResponse = Newtonsoft.Json.JsonConvert.DeserializeObject<BalanceResponse>(jsonResponse);
 
                 if (balanceResponse != null)
                 {
                     systemBalance = balanceResponse.Balance;
+                    Console.WriteLine($"Parsed balance: {systemBalance}");
                 }
                 else
                 {
@@ -136,19 +119,20 @@ else
         }
     }
 
-public class BalanceResponse
-{
-    public decimal Balance { get; set; }
-}
+    public class BalanceResponse
+    {
+        public decimal Balance { get; set; }
+    }
 
 
     private void NavigateToPage1()
     {
-        Navigation.NavigateTo("/admin/balancecard"); // Burada "/page1" yerine gitmek istediğiniz sayfanın yolu yazılmalı
+        Navigation.NavigateTo("/admin/balancecard");
     }
 
     private void NavigateToPage2()
     {
-        Navigation.NavigateTo("/admin/usermanagement"); // Burada "/page2" yerine gitmek istediğiniz sayfanın yolu yazılmalı
+        Navigation.NavigateTo("/admin/usermanagement");
     }
 }
+
