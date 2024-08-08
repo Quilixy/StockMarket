@@ -77,5 +77,17 @@ namespace api.Repository
             return existingStock;
         }
 
+        public async Task<Stock?> HaltTradingAsync(int id, bool halt)
+        {
+            var stock = await GetByIdAsync(id);
+            if (stock == null)
+            {
+                return null;
+            }
+
+            stock.IsTradingHalted = halt;
+            await _context.SaveChangesAsync();
+            return stock;
+        }
     }
 }

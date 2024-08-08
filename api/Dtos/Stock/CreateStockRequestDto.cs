@@ -12,6 +12,8 @@ namespace api.Dtos.Stock
         public string Name {get; set;} = string.Empty;
         public int Quantity {get; set;} = 10000;
         public decimal Price {get; set;}
+        public bool IsTradingHalted { get; set; } = false ;
+
 
     }
 }

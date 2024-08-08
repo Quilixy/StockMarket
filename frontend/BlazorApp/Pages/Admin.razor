@@ -14,7 +14,8 @@ else if (isAdmin)
     <h1>Welcome to the Admin Page</h1>
     <p>This content is only for administrators.</p>
     <UserManagement />
-
+    
+    <button @onclick="NavigateToStockManagement">Manage Stocks</button>
     <button @onclick="NavigateToPage1">Add Balance Card</button>
     <button @onclick="NavigateToPage2">User Management</button>
 
@@ -134,5 +135,10 @@ else
     {
         Navigation.NavigateTo("/admin/usermanagement");
     }
+    private void NavigateToStockManagement()
+    {
+        Navigation.NavigateTo("/admin/stockmanagement");
+    }
+
 }
 

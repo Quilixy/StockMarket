@@ -1,0 +1,88 @@
+@page "/stockhistory/{stockId:int}"
+@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<PageTitle>Stock Price History</PageTitle>
+
+<h3>Stock Price History</h3>
+
+@if (isLoading)
+{
+    <p>Loading...</p>
+}
+else if (history == null || !history.Any())
+{
+    <p>No price history found.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in history)
+            {
+                <tr>
+                    <td>@item.Date.ToShortDateString()</td>
+                    <td>@item.Price</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Parameter] public int StockId { get; set; }
+    private List<StockPriceHistory> history;
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var token = await localStorage.GetItemAsync<string>("token");
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5284/api/stock/{StockId}/history");
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                var response = await Http.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    history = await response.Content.ReadFromJsonAsync<List<StockPriceHistory>>();
+                }
+                else
+                {
+                    Console.WriteLine("API request failed: " + response.ReasonPhrase);
+                    history = new List<StockPriceHistory>();
+                }
+            }
+            else
+            {
+                Console.WriteLine("No token found. Please login.");
+                history = new List<StockPriceHistory>();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error: " + ex.Message);
+            history = new List<StockPriceHistory>();
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    public class StockPriceHistory
+    {
+        public DateTime Date { get; set; }
+        public decimal Price { get; set; }
+    }
+}

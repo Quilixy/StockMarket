@@ -7,6 +7,7 @@ using api.Dtos.Stock;
 using api.Interfaces;
 using api.Mappers;
 using api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,10 +19,14 @@ namespace api.Controller
     {
         private readonly ApplicationDBContext _context;
         private readonly IStockRepository _stockRepo;
-        public StockController(ApplicationDBContext context, IStockRepository stockRepo)
+        private readonly IStockPriceHistoryRepository _priceHistoryRepo;
+        public StockController(ApplicationDBContext context, 
+        IStockRepository stockRepo,
+        IStockPriceHistoryRepository priceHistoryRepo)
         {
             _stockRepo = stockRepo;
             _context = context;
+            _priceHistoryRepo = priceHistoryRepo;
         }
 
         [HttpGet]
@@ -69,6 +74,7 @@ namespace api.Controller
             
             await _context.SaveChangesAsync();
             return Ok(stockModel.ToStockDto());
+            
         }
 
         [HttpDelete]
@@ -84,6 +90,21 @@ namespace api.Controller
             
             
             return NoContent();
+        }
+
+        [HttpPut("{id}/halt")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> HaltTrading(int id, [FromBody] bool halt)
+        {
+            await _stockRepo.HaltTradingAsync(id, halt);
+            return NoContent();
+        }
+
+        [HttpGet("{id}/history")]
+        public async Task<IActionResult> GetPriceHistory(int id)
+        {
+            var history = await _priceHistoryRepo.GetByStockIdAsync(id);
+            return Ok(history);
         }
         
     }

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "hYhiB2UQnUM=",
+  "dgSpecHash": "ZagX9lPJosQ=",
   "success": true,
-  "projectFilePath": "c:\\Users\\yldry\\Desktop\\Projetcs\\Staj\\Yeni klasör\\frontend\\BlazorApp\\BlazorApp.csproj",
+  "projectFilePath": "C:\\Users\\yldry\\Desktop\\Projetcs\\Staj\\Yeni klasör\\frontend\\BlazorApp\\BlazorApp.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\yldry\\.nuget\\packages\\blazored.localstorage\\4.5.0\\blazored.localstorage.4.5.0.nupkg.sha512",
     "C:\\Users\\yldry\\.nuget\\packages\\microsoft.aspnetcore.authorization\\8.0.7\\microsoft.aspnetcore.authorization.8.0.7.nupkg.sha512",

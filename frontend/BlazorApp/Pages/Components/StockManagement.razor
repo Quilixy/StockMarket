@@ -1,11 +1,13 @@
-﻿@page "/stocks"
+@using System.Text.Json
+@using System.Text
+@page "/admin/stockmanagement"
 @inject HttpClient Http
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject NavigationManager Navigation
 
-<PageTitle>Stocks</PageTitle>
+<PageTitle>Stock Management</PageTitle>
 
-<h3>Stock List</h3>
+<h3>Manage Stock Trading Status</h3>
 
 @if (isLoading)
 {
@@ -25,7 +27,7 @@ else
                 <th>Quantity</th>
                 <th>Price</th>
                 <th>Trading Status</th>
-                <th>Actions</th> 
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -38,7 +40,9 @@ else
                     <td>@stock.Price</td>
                     <td>@(stock.IsTradingHalted ? "Halted" : "Active")</td>
                     <td>
-                        <button @onclick="() => ViewStockHistory(stock.Id)">View History</button>
+                        <button @onclick="() => ToggleTradingStatus(stock.Id, !stock.IsTradingHalted)">
+                            @(stock.IsTradingHalted ? "Resume Trading" : "Halt Trading")
+                        </button>
                     </td>
                 </tr>
             }
@@ -90,9 +94,44 @@ else
         }
     }
 
-    private void ViewStockHistory(int stockId)
+    private async Task ToggleTradingStatus(int stockId, bool halt)
     {
-        Navigation.NavigateTo($"/stockhistory/{stockId}");
+        try
+        {
+            var token = await localStorage.GetItemAsync<string>("token");
+
+            if (string.IsNullOrEmpty(token))
+            {
+                Console.WriteLine("Token not found.");
+                return;
+            }
+
+            var requestBody = JsonSerializer.Serialize(halt);
+            var request = new HttpRequestMessage(HttpMethod.Put, $"http://localhost:5284/api/stock/{stockId}/halt")
+            {
+                Headers =
+                {
+                    Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token)
+                },
+                Content = new StringContent(requestBody, Encoding.UTF8, "application/json")
+            };
+
+            var response = await Http.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Refresh stock list
+                await OnInitializedAsync();
+            }
+            else
+            {
+                Console.WriteLine($"Failed to update trading status. Status code: {response.StatusCode}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred while updating trading status: {ex.Message}");
+        }
     }
 
     public class StockModel

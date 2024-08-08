@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.Data;
 
@@ -11,9 +12,11 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240808085738_AddIsTradingHaltedToStock")]
+    partial class AddIsTradingHaltedToStock
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,13 +54,13 @@ namespace api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "0191f606-4c7a-4983-8031-aa102101a0b6",
+                            Id = "af97165f-d258-4e17-a8d5-ebfc2b672a7b",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "2c849a90-beed-44a0-9dd8-31fcba935f11",
+                            Id = "86a3d13d-e0b6-4315-b5ea-139c3dfda6b9",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -306,28 +309,6 @@ namespace api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Stocks");
-                });
-
-            modelBuilder.Entity("api.Models.StockPriceHistory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("StockId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("StockPriceHistories");
                 });
 
             modelBuilder.Entity("api.Models.SystemBalance", b =>

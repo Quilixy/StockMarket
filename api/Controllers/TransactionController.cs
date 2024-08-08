@@ -52,8 +52,7 @@ namespace api.Controllers
 
             var stock = await _stockRepo.GetBySymbolAsync(request.Symbol);
             if (stock == null) return BadRequest("Stock not found");
-
-            
+            if (stock.IsTradingHalted) return BadRequest("Trading is halted for this stock");      
 
             decimal totalCost = request.Quantity * stock.Price;
             decimal commission = totalCost * _commissionRate;
@@ -131,6 +130,7 @@ namespace api.Controllers
 
             var stock = await _stockRepo.GetBySymbolAsync(request.Symbol);
             if (stock == null) return BadRequest("Stock not found");
+            if (stock.IsTradingHalted) return BadRequest("Trading is halted for this stock");
 
             decimal totalIncome = request.Quantity * stock.Price;
             decimal commission = totalIncome * _commissionRate;

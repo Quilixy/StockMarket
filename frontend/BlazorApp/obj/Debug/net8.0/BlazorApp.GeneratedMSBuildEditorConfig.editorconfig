@@ -34,6 +34,14 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ29tcG9uZW50c1xCYWxhbmNlQ2FyZE1hbmFnZW1lbnQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/yldry/Desktop/Projetcs/Staj/Yeni klasör/frontend/BlazorApp/Pages/Components/StockHistory.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ29tcG9uZW50c1xTdG9ja0hpc3RvcnkucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/yldry/Desktop/Projetcs/Staj/Yeni klasör/frontend/BlazorApp/Pages/Components/StockManagement.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ29tcG9uZW50c1xTdG9ja01hbmFnZW1lbnQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/yldry/Desktop/Projetcs/Staj/Yeni klasör/frontend/BlazorApp/Pages/Components/UserManagement.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ29tcG9uZW50c1xVc2VyTWFuYWdlbWVudC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
