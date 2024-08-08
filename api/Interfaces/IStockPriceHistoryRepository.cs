@@ -8,7 +8,7 @@ namespace api.Interfaces
 {
     public interface IStockPriceHistoryRepository
     {
-        Task CreateAsync(StockPriceHistory history);
         Task<IEnumerable<StockPriceHistory>> GetByStockIdAsync(int stockId);
+        Task<StockPriceHistory> AddAsync(StockPriceHistory history);
     }
 }

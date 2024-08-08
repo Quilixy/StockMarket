@@ -77,7 +77,8 @@ namespace api.Migrations
                     Symbol = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    IsTradingHalted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -247,13 +248,34 @@ namespace api.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "StockPriceHistories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StockId = table.Column<int>(type: "int", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StockPriceHistories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StockPriceHistories_Stocks_StockId",
+                        column: x => x.StockId,
+                        principalTable: "Stocks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "da6cadbe-7c88-4e4c-89b6-6c6f2a797f3c", null, "Admin", "ADMIN" },
-                    { "fd879d10-8220-4ad3-97fc-71e28b9c2002", null, "User", "USER" }
+                    { "2ca06640-17e2-476d-b558-f824bd2136f3", null, "User", "USER" },
+                    { "7fcac4d5-60cc-4fc3-b32b-d8cb0808881a", null, "Admin", "ADMIN" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -299,6 +321,11 @@ namespace api.Migrations
                 name: "IX_Portfolios_StockId",
                 table: "Portfolios",
                 column: "StockId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StockPriceHistories_StockId",
+                table: "StockPriceHistories",
+                column: "StockId");
         }
 
         /// <inheritdoc />
@@ -324,6 +351,9 @@ namespace api.Migrations
 
             migrationBuilder.DropTable(
                 name: "Portfolios");
+
+            migrationBuilder.DropTable(
+                name: "StockPriceHistories");
 
             migrationBuilder.DropTable(
                 name: "SystemBalances");

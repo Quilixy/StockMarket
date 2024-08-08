@@ -16,8 +16,6 @@ namespace api.Models
         public int Quantity {get; set;} = 10000;
         public decimal Price {get; set;}
         public bool IsTradingHalted { get; set; }
-
         public List<Portfolio> Portfolios {get; set;} = new List<Portfolio>();
-
     }
 }

@@ -51,13 +51,13 @@ namespace api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "0191f606-4c7a-4983-8031-aa102101a0b6",
+                            Id = "60b84b9f-ef31-4602-ae89-b360f6b1dae5",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "2c849a90-beed-44a0-9dd8-31fcba935f11",
+                            Id = "2a105673-f5bc-48db-9cb6-64135776c8da",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -327,6 +327,8 @@ namespace api.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("StockId");
+
                     b.ToTable("StockPriceHistories");
                 });
 
@@ -448,6 +450,17 @@ namespace api.Migrations
                         .IsRequired();
 
                     b.Navigation("AppUser");
+
+                    b.Navigation("Stock");
+                });
+
+            modelBuilder.Entity("api.Models.StockPriceHistory", b =>
+                {
+                    b.HasOne("api.Models.Stock", "Stock")
+                        .WithMany()
+                        .HasForeignKey("StockId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Stock");
                 });

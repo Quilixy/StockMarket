@@ -7,7 +7,7 @@
 namespace api.Migrations
 {
     /// <inheritdoc />
-    public partial class AddIsTradingHaltedToStock : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,27 +15,20 @@ namespace api.Migrations
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "3b31eeff-1a14-4e09-84f0-b0c0360ac184");
+                keyValue: "2ca06640-17e2-476d-b558-f824bd2136f3");
 
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "ed59031e-3b0c-48d9-84ff-04e3f876f08e");
-
-            migrationBuilder.AddColumn<bool>(
-                name: "IsTradingHalted",
-                table: "Stocks",
-                type: "bit",
-                nullable: false,
-                defaultValue: false);
+                keyValue: "7fcac4d5-60cc-4fc3-b32b-d8cb0808881a");
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "86a3d13d-e0b6-4315-b5ea-139c3dfda6b9", null, "User", "USER" },
-                    { "af97165f-d258-4e17-a8d5-ebfc2b672a7b", null, "Admin", "ADMIN" }
+                    { "17d02036-4f48-4e42-aa90-a325053b66ff", null, "User", "USER" },
+                    { "b5f08e24-dd7f-4316-93b9-87e685317819", null, "Admin", "ADMIN" }
                 });
         }
 
@@ -45,24 +38,20 @@ namespace api.Migrations
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "86a3d13d-e0b6-4315-b5ea-139c3dfda6b9");
+                keyValue: "17d02036-4f48-4e42-aa90-a325053b66ff");
 
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "af97165f-d258-4e17-a8d5-ebfc2b672a7b");
-
-            migrationBuilder.DropColumn(
-                name: "IsTradingHalted",
-                table: "Stocks");
+                keyValue: "b5f08e24-dd7f-4316-93b9-87e685317819");
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "3b31eeff-1a14-4e09-84f0-b0c0360ac184", null, "User", "USER" },
-                    { "ed59031e-3b0c-48d9-84ff-04e3f876f08e", null, "Admin", "ADMIN" }
+                    { "2ca06640-17e2-476d-b558-f824bd2136f3", null, "User", "USER" },
+                    { "7fcac4d5-60cc-4fc3-b32b-d8cb0808881a", null, "Admin", "ADMIN" }
                 });
         }
     }

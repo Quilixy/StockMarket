@@ -12,8 +12,8 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20240808093426_AddStockPriceHistory")]
-    partial class AddStockPriceHistory
+    [Migration("20240808135047_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,13 +54,13 @@ namespace api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "0191f606-4c7a-4983-8031-aa102101a0b6",
+                            Id = "b5f08e24-dd7f-4316-93b9-87e685317819",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "2c849a90-beed-44a0-9dd8-31fcba935f11",
+                            Id = "17d02036-4f48-4e42-aa90-a325053b66ff",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -330,6 +330,8 @@ namespace api.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("StockId");
+
                     b.ToTable("StockPriceHistories");
                 });
 
@@ -451,6 +453,17 @@ namespace api.Migrations
                         .IsRequired();
 
                     b.Navigation("AppUser");
+
+                    b.Navigation("Stock");
+                });
+
+            modelBuilder.Entity("api.Models.StockPriceHistory", b =>
+                {
+                    b.HasOne("api.Models.Stock", "Stock")
+                        .WithMany()
+                        .HasForeignKey("StockId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Stock");
                 });

@@ -10,6 +10,7 @@ using api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace api.Controller
 {
@@ -20,13 +21,18 @@ namespace api.Controller
         private readonly ApplicationDBContext _context;
         private readonly IStockRepository _stockRepo;
         private readonly IStockPriceHistoryRepository _priceHistoryRepo;
+        private readonly ILogger<StockController> _logger;
+
         public StockController(ApplicationDBContext context, 
         IStockRepository stockRepo,
-        IStockPriceHistoryRepository priceHistoryRepo)
+        IStockPriceHistoryRepository priceHistoryRepo,
+        ILogger<StockController> logger)
         {
             _stockRepo = stockRepo;
             _context = context;
             _priceHistoryRepo = priceHistoryRepo;
+            _logger = logger;
+
         }
 
         [HttpGet]
@@ -71,7 +77,14 @@ namespace api.Controller
             {
                 return NotFound();
             }
-            
+            var priceHistory = new StockPriceHistory
+            {
+                StockId = id,
+                Price = updateDto.Price, // Price'ı updateDto'dan alın
+                Date = DateTime.UtcNow
+            };
+            await _priceHistoryRepo.AddAsync(priceHistory);
+
             await _context.SaveChangesAsync();
             return Ok(stockModel.ToStockDto());
             
@@ -103,9 +116,24 @@ namespace api.Controller
         [HttpGet("{id}/history")]
         public async Task<IActionResult> GetPriceHistory(int id)
         {
+            _logger.LogInformation("Querying price history for stock ID: {StockId}", id);
+            
             var history = await _priceHistoryRepo.GetByStockIdAsync(id);
-            return Ok(history);
+
+            if(history == null || !history.Any())
+            {
+                return NotFound(new { Message = "No price history available for this stock." });
+            }
+
+            var historyDto = history.Select(h => new StockPriceHistoryDto
+            {
+                Id = h.Id,
+                StockId = h.StockId,
+                Price = h.Price,
+                Date = h.Date
+            });
+
+            return Ok(historyDto);
         }
-        
     }
 }
