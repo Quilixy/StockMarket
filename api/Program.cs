@@ -126,6 +126,7 @@ builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<IBalanceCardRepository , BalanceCardRepository>();
 builder.Services.AddScoped<IBalanceCardService, BalanceCardService>();
 builder.Services.AddScoped<IStockPriceHistoryRepository, StockPriceHistoryRepository>();
+builder.Services.AddScoped<ICommissionService, CommissionService>();
 builder.Services.AddSingleton<StockDataFetcher>();
 builder.Services.AddHostedService<StockBackgroundService>();
 

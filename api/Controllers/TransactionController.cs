@@ -27,19 +27,23 @@ namespace api.Controllers
         private readonly ITransactionRepository _transactionRepo;
         private readonly IPortfolioRepository _portfolioRepo;
         private readonly IBalanceService _balanceService;
-        private readonly decimal _commissionRate = 0.05m; // %5 komisyon
+        private readonly ICommissionService _commissionService;
+
 
         public TransactionController(UserManager<AppUser> userManager,
         IStockRepository stockRepo,
         ITransactionRepository transactionRepo,
         IPortfolioRepository portfolioRepo,
-        IBalanceService balanceService)
+        IBalanceService balanceService,
+        ICommissionService commissionService)
         {
             _userManager = userManager;
             _stockRepo = stockRepo;
             _transactionRepo = transactionRepo;
             _portfolioRepo = portfolioRepo;
             _balanceService = balanceService;
+            _commissionService = commissionService;
+            
         }
 
         [HttpPost("purchase")]
@@ -54,8 +58,9 @@ namespace api.Controllers
             if (stock == null) return BadRequest("Stock not found");
             if (stock.IsTradingHalted) return BadRequest("Trading is halted for this stock");      
 
+            decimal commissionRate = _commissionService.GetCommissionRate();
             decimal totalCost = request.Quantity * stock.Price;
-            decimal commission = totalCost * _commissionRate;
+            decimal commission = totalCost * commissionRate;
             decimal totalAmount = totalCost + commission;
 
             if (appUser.Balance < totalAmount)
@@ -132,8 +137,9 @@ namespace api.Controllers
             if (stock == null) return BadRequest("Stock not found");
             if (stock.IsTradingHalted) return BadRequest("Trading is halted for this stock");
 
+            decimal commissionRate = _commissionService.GetCommissionRate();
             decimal totalIncome = request.Quantity * stock.Price;
-            decimal commission = totalIncome * _commissionRate;
+            decimal commission = totalIncome * commissionRate;
             decimal totalAmount = totalIncome - commission;
 
             var portfolio = await _portfolioRepo.GetByUserAndSymbolAsync(appUser.Id, request.Symbol);
@@ -214,6 +220,25 @@ namespace api.Controllers
             }).ToList();
 
             return Ok(transactionDtos);
+        }
+
+        [HttpGet("commission")]
+        [Authorize]
+        public IActionResult GetCommissionRate()
+        {
+            decimal commissionRate = _commissionService.GetCommissionRate();
+            return Ok(commissionRate);
+        }
+
+        [HttpPut("commission")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult UpdateCommissionRate([FromBody] decimal newRate)
+        {
+            if (newRate < 0 || newRate > 1)
+                return BadRequest("Commission rate must be between 0 and 1.");
+
+           _commissionService.UpdateCommissionRate(newRate);
+            return Ok($"Commission rate updated to {newRate:P}");
         }
     }    
 }

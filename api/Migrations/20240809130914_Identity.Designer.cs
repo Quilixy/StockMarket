@@ -12,8 +12,8 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20240808135028_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240809130914_Identity")]
+    partial class Identity
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,13 +54,13 @@ namespace api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "7fcac4d5-60cc-4fc3-b32b-d8cb0808881a",
+                            Id = "5f1d53e2-391c-4816-aaa8-1bc84f007797",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "2ca06640-17e2-476d-b558-f824bd2136f3",
+                            Id = "a60bdf23-001e-4623-a5b9-1dac6fa50478",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -261,6 +261,22 @@ namespace api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("BalanceCards");
+                });
+
+            modelBuilder.Entity("api.Models.CommissionRate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Rate")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CommissionRates");
                 });
 
             modelBuilder.Entity("api.Models.Portfolio", b =>

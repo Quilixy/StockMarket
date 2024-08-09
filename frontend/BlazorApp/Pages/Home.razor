@@ -2,16 +2,30 @@
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject HttpClient Http
 @inject NavigationManager Navigation
+@using System.Text.Json
+@using System.Globalization;
 
 <PageTitle>Home</PageTitle>
 
 <h1>@greetingMessage</h1>
 
-<p>Welcome to your new app.</p>
+<p>Welcome to Stock Market project.</p>
 
 @if (balance != null)
 {
     <p>Current Balance: @balance</p>
+    @if (commissionRate != null)
+    {
+        <p>Commission Rate: @commissionRate%</p>
+    }
+    else if (loading)
+    {
+        <p>Loading commission rate...</p>
+    }
+    else
+    {
+        <p>Unable to retrieve commission rate.</p>
+    }
     <div>
         <label for="balanceCardCode">Enter BalanceCard Code:</label>
         <input id="balanceCardCode" @bind="balanceCardCode" />
@@ -27,9 +41,12 @@ else
     <p>You are not logged in.</p>
 }
 
+
+
 @code {
     private string greetingMessage = "Hello, world!";
     private decimal? balance;
+    private decimal? commissionRate;
     private bool loading = true;
     private string balanceCardCode;
 
@@ -42,8 +59,8 @@ else
             var username = await localStorage.GetItemAsync<string>("username");
             greetingMessage = $"Merhaba, {username}!";
 
-            // API'den bakiyeyi al
             await LoadBalanceAsync();
+            await LoadCommissionRateAsync();
         }
         else
         {
@@ -69,19 +86,16 @@ else
                 }
                 else
                 {
-                    // Hata yönetimi
                     Console.WriteLine("Failed to load balance.");
                 }
             }
             else
             {
-                // Token yoksa
                 Console.WriteLine("No token found.");
             }
         }
         catch (Exception ex)
         {
-            // Hata yönetimi
             Console.WriteLine($"Error loading balance: {ex.Message}");
         }
         finally
@@ -89,6 +103,44 @@ else
             loading = false;
         }
     }
+
+    private async Task LoadCommissionRateAsync()
+    {
+        try
+        {
+            var token = await localStorage.GetItemAsync<string>("token");
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                Http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                var response = await Http.GetAsync("http://localhost:5284/api/transaction/commission");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonResponse = await response.Content.ReadAsStringAsync();                    
+                    commissionRate = decimal.Parse(jsonResponse, CultureInfo.InvariantCulture) * 100;
+                }
+                else
+                {
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"Failed to load commission rate. Status: {response.StatusCode}, Error: {errorMessage}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No token found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading commission rate: {ex.Message}");
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
 
     private async Task UseBalanceCard()
     {
@@ -111,24 +163,20 @@ else
                 if (response.IsSuccessStatusCode)
                 {
                     Console.WriteLine("BalanceCard used successfully.");
-                    // Gerekirse bakiye güncellemesini tekrar yükleyin
                     await LoadBalanceAsync();
                 }
                 else
                 {
-                    // Hata yönetimi
                     Console.WriteLine("Failed to use BalanceCard.");
                 }
             }
             else
             {
-                // Token yoksa
                 Console.WriteLine("No token found.");
             }
         }
         catch (Exception ex)
         {
-            // Hata yönetimi
             Console.WriteLine($"Error using BalanceCard: {ex.Message}");
         }
     }
@@ -136,6 +184,11 @@ else
     public class BalanceResponse
     {
         public decimal Balance { get; set; }
+    }
+
+    public class CommissionResponse
+    {
+        public decimal Rate { get; set; }
     }
 
     public class BalanceCardRequest

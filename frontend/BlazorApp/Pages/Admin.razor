@@ -13,22 +13,34 @@ else if (isAdmin)
 {
     <h1>Welcome to the Admin Page</h1>
     <p>This content is only for administrators.</p>
-    <UserManagement />
-    
-    <button @onclick="NavigateToStockManagement">Manage Stocks</button>
-    <button @onclick="NavigateToPage1">Add Balance Card</button>
-    <button @onclick="NavigateToPage2">User Management</button>
-
     @if (systemBalance.HasValue)
     {
         <div>
-            <h1>System Balance: @systemBalance.Value</h1>
+            <p>System Balance: @systemBalance.Value</p>
         </div>
     }
     else
     {
         <p>Unable to fetch system balance.</p>
     }
+    
+    <div>
+        <h3>Update Commission Rate</h3>
+        <input type="number" step="1" @bind="newCommissionRate" placeholder="Enter new commission rate in percentage" />
+        <button @onclick="UpdateCommissionRate">Update</button>
+        @if (updateMessage != null)
+        {
+            <p>@updateMessage</p>
+        }
+    </div>
+
+    <div>
+    <UserManagement />
+    <h3>Manage System</h3>
+    <button @onclick="NavigateToStockManagement">Manage Stocks</button>
+    <button @onclick="NavigateToPage1">Add Balance Card</button>
+    <button @onclick="NavigateToPage2">User Management</button>
+    </div>    
 }
 else
 {
@@ -39,6 +51,8 @@ else
     private bool isAdmin = false;
     private bool loading = true;
     private decimal? systemBalance;
+    private decimal newCommissionRate;
+    private string updateMessage;
 
     protected override async Task OnInitializedAsync()
     {
@@ -102,7 +116,6 @@ else
                 if (balanceResponse != null)
                 {
                     systemBalance = balanceResponse.Balance;
-                    Console.WriteLine($"Parsed balance: {systemBalance}");
                 }
                 else
                 {
@@ -125,6 +138,45 @@ else
         public decimal Balance { get; set; }
     }
 
+    private async Task UpdateCommissionRate()
+    {
+        try
+        {
+            var token = await localStorage.GetItemAsync<string>("token");
+
+            if (string.IsNullOrEmpty(token))
+            {
+                Console.WriteLine("Token not found.");
+                updateMessage = "Token not found.";
+                return;
+            }
+
+            var commissionRateAsDecimal = newCommissionRate / 100;
+
+            var requestMessage = new HttpRequestMessage(HttpMethod.Put, "http://localhost:5284/api/transaction/commission");
+            requestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            requestMessage.Content = new StringContent(
+                commissionRateAsDecimal.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                System.Text.Encoding.UTF8,
+                "application/json"
+            );
+
+            var response = await Http.SendAsync(requestMessage);
+
+            if (response.IsSuccessStatusCode)
+            {
+                updateMessage = "Commission rate updated successfully.";
+            }
+            else
+            {
+                updateMessage = $"Failed to update commission rate. Status code: {response.StatusCode}";
+            }
+        }
+        catch (Exception ex)
+        {
+            updateMessage = $"An error occurred while updating commission rate: {ex.Message}";
+        }
+    }
 
     private void NavigateToPage1()
     {
@@ -135,10 +187,9 @@ else
     {
         Navigation.NavigateTo("/admin/usermanagement");
     }
+    
     private void NavigateToStockManagement()
     {
         Navigation.NavigateTo("/admin/stockmanagement");
     }
-
 }
-

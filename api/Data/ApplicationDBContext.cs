@@ -23,6 +23,7 @@ namespace api.Data
         public DbSet<SystemBalance> SystemBalances { get; set; }
         public DbSet<BalanceCard> BalanceCards { get; set; }
         public DbSet<StockPriceHistory> StockPriceHistories { get; set; }
+        public DbSet<CommissionRate> CommissionRates { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

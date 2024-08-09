@@ -51,13 +51,13 @@ namespace api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "60b84b9f-ef31-4602-ae89-b360f6b1dae5",
+                            Id = "357aaa1b-087f-48a8-aedf-8e032a6a8aa3",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "2a105673-f5bc-48db-9cb6-64135776c8da",
+                            Id = "b224a64a-3f27-4ce7-8b5e-2c1a9a10ec79",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -258,6 +258,22 @@ namespace api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("BalanceCards");
+                });
+
+            modelBuilder.Entity("api.Models.CommissionRate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Rate")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CommissionRates");
                 });
 
             modelBuilder.Entity("api.Models.Portfolio", b =>
