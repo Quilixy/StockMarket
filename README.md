@@ -161,6 +161,7 @@ Bu repo temel olarak kişisel bir portföy sergisidir ancak kod incelemeleri (Co
 ## 📄 Lisans & İletişim
 
 * **Lisans:** Bu proje örnek amaçlı olup **MIT Lisansı** ile sunulmaktadır.
-* **Geliştirici:** Mustafa / Quilixy
+* **Geliştirici:** Yıldıray / Quilixy
 * **GitHub:** [github.com/Quilixy](https://github.com/Quilixy)
-* **LinkedIn:** [LinkedIn profil linkinizi buraya ekleyin]
+* **LinkedIn:** [https://www.linkedin.com/in/yıldıray-dönmez-46b1a0243]
+* **Email:** [yildiraydonmez.dev@gmail.com]
